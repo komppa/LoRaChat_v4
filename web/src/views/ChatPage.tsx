@@ -2,10 +2,14 @@ import React from 'react'
 import {
     CssBaseline,
     Grid,
+    Hidden,
+    Divider,
 } from '@mui/material'
+import MyAvatar from '../components/MyAvatar'
 
 
-const ChatPage = () => {
+
+const ChatPage: React.FC = () => {
 
 
     return (
@@ -19,10 +23,16 @@ const ChatPage = () => {
                 md={false}
                 lg={1.75}
                 sx={{
-                    backgroundColor: 'yellow',
+                    backgroundColor: '#1D232A',
                 }}
             >
-                
+                <Hidden lgDown>
+                    <MyAvatar
+                        callsign={'Komppa'}
+                    />
+                    {/* <Divider light sx={{ backgroundColor: 'white' }} /> */}
+                    <Divider variant="inset" />
+                </Hidden>
             </Grid>
 
             {/* Chat groups and users */}
@@ -32,7 +42,7 @@ const ChatPage = () => {
                 md={3}
                 lg={2.75}
                 sx={{
-                    backgroundColor: 'blue',
+                    backgroundColor: '#282E35',
                 }}
             >
 
@@ -45,7 +55,7 @@ const ChatPage = () => {
                 md={9}
                 lg={12-1.75-2.75}
                 sx={{
-                    backgroundColor: 'pink',
+                    backgroundColor: '#353B43',
                 }}
             >
                 
