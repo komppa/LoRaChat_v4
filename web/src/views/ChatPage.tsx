@@ -6,7 +6,7 @@ import {
     Divider,
 } from '@mui/material'
 import MyAvatar from '../components/MyAvatar'
-
+import MainMenu from '../components/MainMenu'
 
 
 const ChatPage: React.FC = () => {
@@ -27,9 +27,11 @@ const ChatPage: React.FC = () => {
                 }}
             >
                 <Hidden lgDown>
+
                     <MyAvatar
                         callsign={'OH9KR'}
                     />
+
                     {/* <Divider light sx={{ backgroundColor: 'white' }} /> */}
                     <Divider
                         orientation="horizontal"
@@ -41,6 +43,9 @@ const ChatPage: React.FC = () => {
                             mt: 4,
                         }}
                     />
+
+                    <MainMenu />
+                    
                 </Hidden>
             </Grid>
 
