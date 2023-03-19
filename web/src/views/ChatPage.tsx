@@ -7,6 +7,7 @@ import {
 } from '@mui/material'
 import MyAvatar from '../components/MyAvatar'
 import MainMenu from '../components/MainMenu'
+import SearchBar from '../components/SearchBar'
 
 
 const ChatPage: React.FC = () => {
@@ -60,6 +61,19 @@ const ChatPage: React.FC = () => {
                 }}
             >
 
+                <SearchBar />
+
+                <Divider
+                    orientation="horizontal"
+                    variant="middle"
+                    sx={{
+                        width: '80%',
+                        margin: '0 auto',
+                        backgroundColor: '#404040',
+                        mt: 4,
+                    }}
+                />
+                    
             </Grid>
 
             {/* Chat window */}
