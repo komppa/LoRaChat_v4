@@ -21,15 +21,15 @@ const MainMenu = () => {
             <MenuTitle title='Chat' />
             <MenuButton title='All messages' selected={isSelected('/')} onClick={() => navigate('/')} />
             <MenuButton title='Unread messages' selected={isSelected('/unread')} onClick={() => navigate('/unread')} />
-            <MenuButton title='Annoucements' selected={isSelected('/announcements')} onClick={() => console.log('Clicked Annoucements')} />
+            <MenuButton title='Announcements' selected={isSelected('/announcements')} onClick={() => navigate('/announcements')} />
 
             <MenuTitle title='Network' />
-            <MenuButton title='Sensors' selected={isSelected('/sensors')} onClick={() => console.log('Clicked Sensors')} />
-            <MenuButton title='Offnet' selected={isSelected('/offnet')} onClick={() => console.log('Clicked Offnet')} />
+            <MenuButton title='Sensors' selected={isSelected('/sensors')} onClick={() => navigate('/sensors')} />
+            <MenuButton title='Offnet' selected={isSelected('/offnet')} onClick={() => navigate('/offnet')} />
 
             <MenuTitle title='General' />
-            <MenuButton title='Help' selected={isSelected('/help')} onClick={() => console.log('Clicked Help')} />
-            <MenuButton title='Settings' selected={isSelected('/settings')} onClick={() => console.log('Clicked Settings')} />
+            <MenuButton title='Help' selected={isSelected('/help')} onClick={() => navigate('/help')} />
+            <MenuButton title='Settings' selected={isSelected('/settings')} onClick={() => navigate('/settings')} />
 
         </List>
     )
