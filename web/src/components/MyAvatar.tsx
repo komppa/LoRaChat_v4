@@ -2,10 +2,8 @@ import React from 'react'
 import {
     Box,
     Typography,
-    Avatar,
-    CssBaseline,
 } from '@mui/material'
-import '../index.css'
+import AvatarCircle from './AvatarCircle'
 
 
 interface MyAvatarProps {
@@ -35,25 +33,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 }}
             >
                 {/* Avatar circle */}
-                <Avatar
-                    sx={{
-                        border: '2.5px solid black',
-                        width: theme => theme.spacing(10),
-                        height: theme => theme.spacing(10),
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        mt: 2.5,
-                        backgroundColor: 'pink',
-                        color: 'black',
-                    }}
-                >
-                    <Typography variant="h2" style={{ fontWeight: 'bold' }}>
-                        {
-                            callsign.charAt(callsign.length - 2).toUpperCase()    // TODO allow longer callsigns also. The first character if two character callsignc
-                        }
-                    </Typography>
-                </Avatar>
+                <AvatarCircle text={ callsign.charAt(callsign.length -2).toUpperCase() } />
 
                 {/* Connection status LED */}
                 <Box

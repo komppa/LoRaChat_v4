@@ -8,6 +8,8 @@ import {
 import MyAvatar from '../components/MyAvatar'
 import MainMenu from '../components/MainMenu'
 import SearchBar from '../components/SearchBar'
+import { MenuTitle } from '../components/MenuListButton'
+import ChatSelectButton from '../components/ChatSelectButton'
 
 
 const ChatPage: React.FC = () => {
@@ -73,6 +75,29 @@ const ChatPage: React.FC = () => {
                         mt: 4,
                     }}
                 />
+
+                {/* Global chat groups */}
+                <MenuTitle title='Global' />
+
+                <ChatSelectButton
+                    name='Global group 1'
+                />
+
+                <ChatSelectButton
+                    name='Global group 2'
+                />
+
+                {/* Direct messaging */}
+                <MenuTitle title='Direct' />
+
+                <ChatSelectButton
+                    name='Jakke'
+                />
+
+                <ChatSelectButton
+                    name='Sepi'
+                />
+
                     
             </Grid>
 
