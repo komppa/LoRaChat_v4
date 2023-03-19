@@ -10,9 +10,10 @@ import MainMenu from '../components/MainMenu'
 import SearchBar from '../components/SearchBar'
 import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
+import { ChatHeader } from '../components/Chat'
 
 
-const ChatPage: React.FC = () => {
+const ChatPage = () => {
 
 
     return (
@@ -63,42 +64,43 @@ const ChatPage: React.FC = () => {
                 }}
             >
 
-                <SearchBar />
+                <Hidden mdDown>
+                    <SearchBar />
 
-                <Divider
-                    orientation="horizontal"
-                    variant="middle"
-                    sx={{
-                        width: '80%',
-                        margin: '0 auto',
-                        backgroundColor: '#404040',
-                        mt: 4,
-                    }}
-                />
+                    <Divider
+                        orientation="horizontal"
+                        variant="middle"
+                        sx={{
+                            width: '80%',
+                            margin: '0 auto',
+                            backgroundColor: '#404040',
+                            mt: 4,
+                        }}
+                    />
 
-                {/* Global chat groups */}
-                <MenuTitle title='Global' />
+                    {/* Global chat groups */}
+                    <MenuTitle title='Global' />
 
-                <ChatSelectButton
-                    name='Global group 1'
-                />
+                    <ChatSelectButton
+                        name='Global group 1'
+                    />
 
-                <ChatSelectButton
-                    name='Global group 2'
-                />
+                    <ChatSelectButton
+                        name='Global group 2'
+                    />
 
-                {/* Direct messaging */}
-                <MenuTitle title='Direct' />
+                    {/* Direct messaging */}
+                    <MenuTitle title='Direct' />
 
-                <ChatSelectButton
-                    name='Jakke'
-                />
+                    <ChatSelectButton
+                        name='Jakke'
+                    />
 
-                <ChatSelectButton
-                    name='Sepi'
-                />
+                    <ChatSelectButton
+                        name='Sepi'
+                    />
 
-                    
+                </Hidden>
             </Grid>
 
             {/* Chat window */}
@@ -111,6 +113,10 @@ const ChatPage: React.FC = () => {
                     backgroundColor: '#353B43',
                 }}
             >
+
+                <ChatHeader name='Jakke' online={false} />
+                {/* <Chat />
+                <ChatInput /> */}
                 
             </Grid>
                 

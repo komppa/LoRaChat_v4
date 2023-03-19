@@ -43,8 +43,8 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                         borderRadius: '50%',
                         backgroundColor: 'green',
                         position: 'absolute',
-                        bottom: 4,
-                        right: 4,
+                        bottom: 0,
+                        right: 0,
                         border: '2.5px solid black',
                     }}
                 />
