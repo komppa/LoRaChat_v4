@@ -4,13 +4,14 @@ import {
     Grid,
     Hidden,
     Divider,
+    Box,
 } from '@mui/material'
 import MyAvatar from '../components/MyAvatar'
 import MainMenu from '../components/MainMenu'
 import SearchBar from '../components/SearchBar'
 import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
-import { ChatHeader, Chat } from '../components/Chat'
+import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 
 
 const ChatPage = () => {
@@ -132,9 +133,17 @@ const ChatPage = () => {
                 }}
             >
 
-                <ChatHeader name='Jakke' online={true} />
-                <Chat messages={messages} />
-                {/* <ChatInput /> */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100vh',
+                    }}
+                >
+                    <ChatHeader name="Jakke" online={true} />
+                    <Chat messages={messages} />
+                    <ChatInput />
+                </Box>
                 
             </Grid>
                 

@@ -1,7 +1,7 @@
-import { Typography } from '@mui/material'
-import { Box } from '@mui/material'
-import React from 'react'
-import { Circle } from '@mui/icons-material'
+import React, { useState } from 'react'
+// import { SystemProps } from '@mui/system'
+import { InputBase, Box, IconButton, Typography } from '@mui/material'
+import { Clear as ClearIcon, Circle } from '@mui/icons-material'
 
 
 interface ChatHeaderProps {
@@ -63,6 +63,10 @@ interface ChatWindowProps {
   messages: Message[];
 }
 
+// interface ChatWindowProps extends SystemProps {
+//     messages: Message[];
+// }
+
 const ChatBubble: React.FC<Message> = ({ sender, content, isCurrentUser }) => {
     return (
         <Box
@@ -93,6 +97,7 @@ export const Chat: React.FC<ChatWindowProps> = ({ messages }) => {
                 flexDirection: 'column',
                 overflowY: 'auto',
                 padding: '1rem',
+                flexGrow: 1,
             }}
         >
             {
@@ -102,4 +107,52 @@ export const Chat: React.FC<ChatWindowProps> = ({ messages }) => {
             }
         </Box>
     )
+}
+
+export const ChatInput = () => {
+    
+    
+    const [messageInput, setMessageInput] = useState('')
+    
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setMessageInput(event.target.value)
+    }
+    
+    const handleClear = () => setMessageInput('')
+    
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                borderRadius: '50px',
+                backgroundColor: '#465260',
+                padding: '0.5rem',
+                paddingLeft: '1rem',
+                width: '90%',
+                margin: '2rem auto',    // TODO fix 2rem
+                color: '#848484',
+            }}
+        >
+            <InputBase
+                value={ messageInput }
+                onChange={ handleChange }
+                placeholder="Type your message here"
+                sx={{
+                    marginLeft: '0.5rem',
+                    flexGrow: 1,
+                    color: 'white',
+                }}
+            />
+            {
+                messageInput && (
+                    <IconButton onClick={ handleClear } size="small">
+                        <ClearIcon sx={{ color: '#848484' }} />
+                    </IconButton>
+                )
+            }
+        </Box>
+    )
+    
+
 }
