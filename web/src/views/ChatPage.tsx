@@ -10,10 +10,28 @@ import MainMenu from '../components/MainMenu'
 import SearchBar from '../components/SearchBar'
 import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
-import { ChatHeader } from '../components/Chat'
+import { ChatHeader, Chat } from '../components/Chat'
 
 
 const ChatPage = () => {
+
+    const messages = [
+        {
+            sender: 'Jakke',
+            content: 'Hello!',
+            isCurrentUser: false,
+        },
+        {
+            sender: 'K',
+            content: 'Hello, World!\\n',
+            isCurrentUser: true,
+        },
+        {
+            sender: 'Jakke',
+            content: 'Great!',
+            isCurrentUser: false,
+        },
+    ]
 
 
     return (
@@ -114,9 +132,9 @@ const ChatPage = () => {
                 }}
             >
 
-                <ChatHeader name='Jakke' online={false} />
-                {/* <Chat />
-                <ChatInput /> */}
+                <ChatHeader name='Jakke' online={true} />
+                <Chat messages={messages} />
+                {/* <ChatInput /> */}
                 
             </Grid>
                 

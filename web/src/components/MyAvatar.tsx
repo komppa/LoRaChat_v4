@@ -45,7 +45,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                         position: 'absolute',
                         bottom: 0,
                         right: 0,
-                        border: '2.5px solid black',
+                        border: '1.5px solid black',
                     }}
                 />
             </Box>
