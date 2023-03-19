@@ -28,10 +28,19 @@ const ChatPage: React.FC = () => {
             >
                 <Hidden lgDown>
                     <MyAvatar
-                        callsign={'Komppa'}
+                        callsign={'OH9KR'}
                     />
                     {/* <Divider light sx={{ backgroundColor: 'white' }} /> */}
-                    <Divider variant="inset" />
+                    <Divider
+                        orientation="horizontal"
+                        variant="middle"
+                        sx={{
+                            width: '80%',
+                            margin: '0 auto',
+                            backgroundColor: '#404040',
+                            mt: 4,
+                        }}
+                    />
                 </Hidden>
             </Grid>
 

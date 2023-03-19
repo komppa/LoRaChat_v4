@@ -16,7 +16,7 @@ interface MyAvatarProps {
 const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
 
     // TODO implement getter for this connection status string
-    const connectionString = 'connected'
+    const connectionString = 'connected to the network'
 
     // TODO implement getter for avatar color
 
@@ -37,9 +37,9 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 {/* Avatar circle */}
                 <Avatar
                     sx={{
-                        border: '1px solid black',
-                        width: theme => theme.spacing(8),
-                        height: theme => theme.spacing(8),
+                        border: '2.5px solid black',
+                        width: theme => theme.spacing(10),
+                        height: theme => theme.spacing(10),
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -48,10 +48,9 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                         color: 'black',
                     }}
                 >
-                    <Typography variant="h4">
+                    <Typography variant="h2" style={{ fontWeight: 'bold' }}>
                         {
-                            callsign.charAt(callsign.length - 2).toUpperCase() +    // TODO allow longer callsigns also. The first character if two character callsignc
-                            callsign.charAt(callsign.length - 1).toUpperCase()      // Last character of the callsign
+                            callsign.charAt(callsign.length - 2).toUpperCase()    // TODO allow longer callsigns also. The first character if two character callsignc
                         }
                     </Typography>
                 </Avatar>
@@ -59,21 +58,21 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 {/* Connection status LED */}
                 <Box
                     sx={{
-                        width: '15px',
-                        height: '15px',
+                        width: '20px',
+                        height: '20px',
                         borderRadius: '50%',
                         backgroundColor: 'green',
                         position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                        border: '1px solid black',
+                        bottom: 4,
+                        right: 4,
+                        border: '2.5px solid black',
                     }}
                 />
             </Box>
 
             {/* Callsign */}
             <Typography variant="h4" component="div" sx={{ mt: 1, fontWeight: 'bold', color: 'white' }}>
-                {callsign}
+                { callsign }
             </Typography>
 
             {/* Connection status text */}
