@@ -13,7 +13,6 @@ import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 
-
 const ChatPage = () => {
 
     const messages = [
@@ -132,7 +131,7 @@ const ChatPage = () => {
                     backgroundColor: '#353B43',
                 }}
             >
-
+                
                 <Box
                     sx={{
                         display: 'flex',
@@ -144,6 +143,7 @@ const ChatPage = () => {
                     <Chat messages={messages} />
                     <ChatInput />
                 </Box>
+
                 
             </Grid>
                 
