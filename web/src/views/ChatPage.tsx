@@ -12,26 +12,47 @@ import SearchBar from '../components/SearchBar'
 import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { setCurrentMenu } from '../state/reducers/menuReducer'
+import { addMessages } from '../state/reducers/messageReducer'
 
 const ChatPage = () => {
 
-    const messages = [
-        {
-            sender: 'Jakke',
-            content: 'Hello!',
-            isCurrentUser: false,
-        },
-        {
-            sender: 'K',
-            content: 'Hello, World!\\n',
-            isCurrentUser: true,
-        },
-        {
-            sender: 'Jakke',
-            content: 'Great!',
-            isCurrentUser: false,
-        },
-    ]
+    const dispatch = useDispatch()
+    const selectedContact = useSelector((state: any) => state.menu)
+    const messages = useSelector((state: any) => state.message, shallowEqual)
+
+
+    // Setup your WebSocket connection here
+    const websocket = new WebSocket('ws://localhost:8080')
+
+    websocket.onmessage = (event) => {
+        
+        const payload = JSON.parse(event.data)
+
+        // eslint-disable-next-line no-prototype-builtins
+        if (payload.hasOwnProperty('type') && payload.type === 'messages') {
+            dispatch(addMessages(payload.data))
+        }
+    }
+
+    // const messages = [
+    //     {
+    //         sender: 'Jakke',
+    //         content: 'Hello!',
+    //         isCurrentUser: false,
+    //     },
+    //     {
+    //         sender: 'K',
+    //         content: 'Hello, World!\\n',
+    //         isCurrentUser: true,
+    //     },
+    //     {
+    //         sender: 'Jakke',
+    //         content: 'Great!',
+    //         isCurrentUser: false,
+    //     },
+    // ]
 
 
     return (
@@ -100,11 +121,15 @@ const ChatPage = () => {
                     <MenuTitle title='Global' />
 
                     <ChatSelectButton
-                        name='Global group 1'
+                        name='Global chat group 1'
+                        selected={selectedContact == 'G1' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('G1'))}
                     />
 
                     <ChatSelectButton
-                        name='Global group 2'
+                        name='Global chat group 2'
+                        selected={selectedContact == 'G2' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('G2'))}
                     />
 
                     {/* Direct messaging */}
@@ -112,10 +137,14 @@ const ChatPage = () => {
 
                     <ChatSelectButton
                         name='Jakke'
+                        selected={false}
+                        onClick={() => console.log('123')}
                     />
 
                     <ChatSelectButton
                         name='Sepi'
+                        selected={false}
+                        onClick={() => console.log('123')}
                     />
 
                 </Hidden>
