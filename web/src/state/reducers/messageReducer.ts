@@ -53,10 +53,24 @@ const messagesSlice = createSlice({
             }
 
         },
+        sendMessage: (state, action: PayloadAction<{ to: string, content: string }>) => {
+            // New message sent by me
+            state.push({
+                // TODO CRIT I do not know these ids, server should create these?
+                id: (Math.floor(Math.random() * 255)).toString(),
+                from: 'Me',
+                to: action.payload.to,
+                content: action.payload.content,
+                // Just for my client
+                isRead: false,  // We do not care, this is my message
+                receivedAt: Date.now(), // When this message was sent
+                isCurrentUser: true,    // This message is sent by me
+            })
+        },
     },
 })
 
 
-export const { addMessages, markMessageAsRead } = messagesSlice.actions
+export const { addMessages, markMessageAsRead, sendMessage } = messagesSlice.actions
 
 export default messagesSlice.reducer

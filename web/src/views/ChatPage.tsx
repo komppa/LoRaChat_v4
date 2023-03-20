@@ -14,7 +14,7 @@ import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setCurrentMenu } from '../state/reducers/menuReducer'
-import { addMessages } from '../state/reducers/messageReducer'
+import { addMessages, sendMessage } from '../state/reducers/messageReducer'
 import { addUsers } from '../state/reducers/userReducer'
 import { User } from '../state/reducers/userReducer'
 
@@ -24,6 +24,8 @@ const ChatPage = () => {
     const selectedContact = useSelector((state: any) => state.menu)
     const messages = useSelector((state: any) => state.message, shallowEqual)
     const users = useSelector((state: any) => state.user, shallowEqual)
+
+    const handleMessageSend = (newMessage: { to: string, content: string }) => dispatch(sendMessage(newMessage))
 
     // Setup your WebSocket connection here
     const websocket = new WebSocket('ws://localhost:8080')
@@ -61,11 +63,13 @@ const ChatPage = () => {
             >
                 <Hidden lgDown>
 
+                    {/* TODO fix me */}
+                    <br />
+
                     <MyAvatar
-                        callsign={'OH9KR'}
+                        callsign={'Komppa'}
                     />
 
-                    {/* <Divider light sx={{ backgroundColor: 'white' }} /> */}
                     <Divider
                         orientation="horizontal"
                         variant="middle"
@@ -136,7 +140,6 @@ const ChatPage = () => {
                         ))
                     }
 
-
                 </Hidden>
             </Grid>
 
@@ -160,10 +163,9 @@ const ChatPage = () => {
                 >
                     <ChatHeader name={selectedContact} online={true} />
                     <Chat selectedContact={selectedContact} messages={messages} />
-                    <ChatInput />
+                    <ChatInput selectedContact={selectedContact} onSubmit={handleMessageSend} />
                 </Box>
 
-                
             </Grid>
                 
         </Grid>

@@ -33,7 +33,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 }}
             >
                 {/* Avatar circle */}
-                <AvatarCircle text={ callsign.charAt(callsign.length -2).toUpperCase() } />
+                <AvatarCircle text={ callsign.charAt(0) } />
 
                 {/* Connection status LED */}
                 <Box

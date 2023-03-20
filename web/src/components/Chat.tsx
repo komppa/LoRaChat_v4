@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 // import { SystemProps } from '@mui/system'
 import { InputBase, Box, IconButton, Typography } from '@mui/material'
-import { Clear as  ClearIcon, Circle } from '@mui/icons-material'
+import { Clear as  ClearIcon, Circle, Send as SendIcon } from '@mui/icons-material'
 import { Message } from '../state/reducers/messageReducer'
 
 
@@ -9,6 +9,17 @@ interface ChatHeaderProps {
     name: string
     online: boolean
 }
+
+interface ChatWindowProps {
+    messages: Message[]
+    selectedContact: string // Username of the user or 'G1' or 'G2' for global chat groups
+}
+
+interface ChatInputProps {
+    onSubmit: ({ to, content }: { to: string, content: string }) => void
+    selectedContact: string
+}
+
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
 
@@ -54,10 +65,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
 }
 
 
-interface ChatWindowProps {
-  messages: Message[]
-  selectedContact: string // Username of the user or 'G1' or 'G2' for global chat groups
-}
+
 
 // interface ChatWindowProps extends SystemProps {
 //     messages: Message[];
@@ -115,7 +123,7 @@ export const Chat: React.FC<ChatWindowProps> = ({ messages, selectedContact }) =
     )
 }
 
-export const ChatInput = () => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, selectedContact }) => {
     
     
     const [messageInput, setMessageInput] = useState('')
@@ -124,7 +132,13 @@ export const ChatInput = () => {
         setMessageInput(event.target.value)
     }
     
-    const handleClear = () => setMessageInput('')
+    const handleSubmit = () => {
+        onSubmit({
+            to: selectedContact,
+            content: messageInput
+        })        
+        setMessageInput('')
+    }
     
     return (
         <Box
@@ -152,8 +166,8 @@ export const ChatInput = () => {
             />
             {
                 messageInput && (
-                    <IconButton onClick={ handleClear } size="small">
-                        <ClearIcon sx={{ color: '#848484' }} />
+                    <IconButton onClick={ handleSubmit } size="small">
+                        <SendIcon sx={{ color: '#848484' }} />
                     </IconButton>
                 )
             }
