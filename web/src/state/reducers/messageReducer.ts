@@ -33,7 +33,7 @@ const messagesSlice = createSlice({
                         receivedAt: Date.now(),
                         // TODO VERY CRIT, get current username and
                         // decide whether this is me
-                        isCurrentUser: false,
+                        isCurrentUser: message.sender === 'Me' ? true : false,
                     })
                 }
 

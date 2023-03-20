@@ -122,14 +122,14 @@ const ChatPage = () => {
 
                     <ChatSelectButton
                         name='Global chat group 1'
-                        selected={selectedContact == 'G1' ? true : false}
-                        onClick={() => dispatch(setCurrentMenu('G1'))}
+                        selected={selectedContact == 'Global chat group 1' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('Global chat group 1'))}
                     />
 
                     <ChatSelectButton
                         name='Global chat group 2'
-                        selected={selectedContact == 'G2' ? true : false}
-                        onClick={() => dispatch(setCurrentMenu('G2'))}
+                        selected={selectedContact == 'Global chat group 2' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('Global chat group 2'))}
                     />
 
                     {/* Direct messaging */}
@@ -137,14 +137,14 @@ const ChatPage = () => {
 
                     <ChatSelectButton
                         name='Jakke'
-                        selected={false}
-                        onClick={() => console.log('123')}
+                        selected={selectedContact === 'Jakke' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('Jakke'))}
                     />
 
                     <ChatSelectButton
                         name='Sepi'
-                        selected={false}
-                        onClick={() => console.log('123')}
+                        selected={selectedContact === 'Sepi' ? true : false}
+                        onClick={() => dispatch(setCurrentMenu('Sepi'))}
                     />
 
                 </Hidden>
@@ -168,8 +168,8 @@ const ChatPage = () => {
                         height: '100vh',
                     }}
                 >
-                    <ChatHeader name="Jakke" online={true} />
-                    <Chat messages={messages} />
+                    <ChatHeader name={selectedContact} online={true} />
+                    <Chat selectedContact={selectedContact} messages={messages} />
                     <ChatInput />
                 </Box>
 

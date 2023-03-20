@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 // import { SystemProps } from '@mui/system'
 import { InputBase, Box, IconButton, Typography } from '@mui/material'
-import { Clear as ClearIcon, Circle } from '@mui/icons-material'
+import { Clear as  ClearIcon, Circle } from '@mui/icons-material'
+import { Message } from '../state/reducers/messageReducer'
 
 
 interface ChatHeaderProps {
-    name: string;
-    online: boolean;
+    name: string
+    online: boolean
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
@@ -53,14 +54,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
 }
 
 
-interface Message {
-  sender: string;
-  content: string;
-  isCurrentUser: boolean;
-}
-
 interface ChatWindowProps {
-  messages: Message[];
+  messages: Message[]
+  selectedContact: string // Username of the user or 'G1' or 'G2' for global chat groups
 }
 
 // interface ChatWindowProps extends SystemProps {
@@ -89,7 +85,17 @@ const ChatBubble: React.FC<Message> = ({ sender, content, isCurrentUser }) => {
     )
 }
 
-export const Chat: React.FC<ChatWindowProps> = ({ messages }) => {
+export const Chat: React.FC<ChatWindowProps> = ({ messages, selectedContact }) => {
+
+    const [filteredMessages, setFilteredMessages] = useState<Message[]>([])
+
+    useEffect(() => {
+
+        const filtered = messages.filter(message => message.sender === selectedContact)
+        setFilteredMessages(filtered)
+
+    }, [messages, selectedContact])
+
     return (
         <Box
             sx={{
@@ -101,7 +107,7 @@ export const Chat: React.FC<ChatWindowProps> = ({ messages }) => {
             }}
         >
             {
-                messages.map((message, index) => (
+                filteredMessages.map((message, index) => (
                     <ChatBubble key={index} {...message} />
                 ))
             }

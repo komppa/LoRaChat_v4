@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const menuSlice = createSlice({
     name: 'menu',
-    initialState: 'G1',
+    initialState: 'Global chat group 1',
     reducers: {
         setCurrentMenu(state, action) {
             return action.payload
