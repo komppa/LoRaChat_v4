@@ -15,13 +15,15 @@ import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setCurrentMenu } from '../state/reducers/menuReducer'
 import { addMessages } from '../state/reducers/messageReducer'
+import { addUsers } from '../state/reducers/userReducer'
+import { User } from '../state/reducers/userReducer'
 
 const ChatPage = () => {
 
     const dispatch = useDispatch()
     const selectedContact = useSelector((state: any) => state.menu)
     const messages = useSelector((state: any) => state.message, shallowEqual)
-
+    const users = useSelector((state: any) => state.user, shallowEqual)
 
     // Setup your WebSocket connection here
     const websocket = new WebSocket('ws://localhost:8080')
@@ -34,25 +36,13 @@ const ChatPage = () => {
         if (payload.hasOwnProperty('type') && payload.type === 'messages') {
             dispatch(addMessages(payload.data))
         }
-    }
 
-    // const messages = [
-    //     {
-    //         sender: 'Jakke',
-    //         content: 'Hello!',
-    //         isCurrentUser: false,
-    //     },
-    //     {
-    //         sender: 'K',
-    //         content: 'Hello, World!\\n',
-    //         isCurrentUser: true,
-    //     },
-    //     {
-    //         sender: 'Jakke',
-    //         content: 'Great!',
-    //         isCurrentUser: false,
-    //     },
-    // ]
+        // eslint-disable-next-line no-prototype-builtins
+        if (payload.hasOwnProperty('type') && payload.type === 'users') {
+            dispatch(addUsers(payload.data))
+        }
+
+    }
 
 
     return (
@@ -135,17 +125,17 @@ const ChatPage = () => {
                     {/* Direct messaging */}
                     <MenuTitle title='Direct' />
 
-                    <ChatSelectButton
-                        name='Jakke'
-                        selected={selectedContact === 'Jakke' ? true : false}
-                        onClick={() => dispatch(setCurrentMenu('Jakke'))}
-                    />
+                    {
+                        users.map((user: User) => (
+                            <ChatSelectButton
+                                key={ user.id }
+                                name={ user.username }
+                                selected={selectedContact === user.username ? true : false}
+                                onClick={() => dispatch(setCurrentMenu(user.username))}
+                            />
+                        ))
+                    }
 
-                    <ChatSelectButton
-                        name='Sepi'
-                        selected={selectedContact === 'Sepi' ? true : false}
-                        onClick={() => dispatch(setCurrentMenu('Sepi'))}
-                    />
 
                 </Hidden>
             </Grid>

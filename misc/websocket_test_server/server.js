@@ -8,6 +8,37 @@ wss.on("connection", ws => {
 
     console.log("new client connected")
 
+    const activeUsers = {
+      type: 'users',
+      data: [
+        {
+            username: "Jakke",
+            rssi: "-97",
+            online: true,
+            lastSeen: 0,
+        },
+        {
+            username: "Sepi",
+            rssi: "-120",
+            online: true,
+            lastSeen: 0,
+        },
+        {
+            username: "Östermalm",
+            rssi: "-80",
+            online: true,
+            lastSeen: 0,
+        },
+        {
+            username: "Keinonen",
+            rssi: "-110",
+            online: true,
+            lastSeen: 0,
+        }
+      ]
+    }
+
+
     const messages = {
       type: 'messages',
       data: [
@@ -45,11 +76,16 @@ wss.on("connection", ws => {
     }
 
 
-    intervalVar = setInterval(() => {
-      ws.send(JSON.stringify(messages))
-    }, 1000)
+    // intervalVar = setInterval(() => {
+    //   ws.send(JSON.stringify(messages))
+    // }, 1000)
  
+    // On connect, send previously sent messages that idling node has received
     ws.send(JSON.stringify(messages))
+
+    // On connect, send out active users of the LRC network
+    ws.send(JSON.stringify(activeUsers))
+
 
     ws.on("message", data => {
       console.log(data.toString())
