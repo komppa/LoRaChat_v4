@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import AvatarCircle from './AvatarCircle'
 import { SignalCellular4Bar } from '@mui/icons-material'
 
-const ChatSelectButton = ({ name }: { name: string }) => {
+const ChatSelectButton = ({ name, selected, onClick }: { name: string, selected: boolean, onClick: () => void }) => {
 
     return (
         
@@ -17,8 +17,10 @@ const ChatSelectButton = ({ name }: { name: string }) => {
                 margin: '1rem auto',    // TODO fix 2rem
                 '&:hover': {
                     backgroundColor: '#353d47'
-                }
+                },
+                backgroundColor: selected ? '#353d46' : '',
             }}
+            onClick={() => onClick()}
         >
             {/* TODO get initials from props, to match other places also */}
             <AvatarCircle text={ name.charAt(0).toUpperCase() } />

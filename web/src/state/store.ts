@@ -1,14 +1,14 @@
 import { combineReducers } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
 
-// import menuReducer from './reducers/menuReducer'
+import menuReducer from './reducers/menuReducer'
 import messageReducer from './reducers/messageReducer'
 
 
 
 const reducer = combineReducers({
 
-    // menu: menuReducer,
+    menu: menuReducer,
     message: messageReducer,
 
 })
