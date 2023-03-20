@@ -3,7 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface Message {
   id: string
-  sender: string
+  from: string
+  to: string
   content: string
   isRead: boolean
   receivedAt: number
@@ -27,13 +28,14 @@ const messagesSlice = createSlice({
                 // New message, saving it to state
                     state.push({
                         id: message.id,
-                        sender: message.sender,
+                        from: message.from,
+                        to: message.to,
                         content: message.content,
                         isRead: false,
                         receivedAt: Date.now(),
                         // TODO VERY CRIT, get current username and
                         // decide whether this is me
-                        isCurrentUser: message.sender === 'Me' ? true : false,
+                        isCurrentUser: message.from === 'Me' ? true : false,
                     })
                 }
 

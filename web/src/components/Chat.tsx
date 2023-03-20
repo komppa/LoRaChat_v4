@@ -63,7 +63,7 @@ interface ChatWindowProps {
 //     messages: Message[];
 // }
 
-const ChatBubble: React.FC<Message> = ({ sender, content, isCurrentUser }) => {
+const ChatBubble: React.FC<Message> = ({ from, content, isCurrentUser }) => {
     return (
         <Box
             sx={{
@@ -76,7 +76,7 @@ const ChatBubble: React.FC<Message> = ({ sender, content, isCurrentUser }) => {
             }}
         >
             <Typography variant="subtitle2" fontWeight="bold">
-                { sender }
+                { from }
             </Typography>
             <Typography variant="body1">
                 { content }
@@ -91,7 +91,7 @@ export const Chat: React.FC<ChatWindowProps> = ({ messages, selectedContact }) =
 
     useEffect(() => {
 
-        const filtered = messages.filter(message => message.sender === selectedContact)
+        const filtered = messages.filter(message => message.from === selectedContact || (message.from === 'Me' && message.to === selectedContact))
         setFilteredMessages(filtered)
 
     }, [messages, selectedContact])
