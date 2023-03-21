@@ -7,7 +7,7 @@ import menuReducer from './reducers/menuReducer'
 import messageReducer from './reducers/messageReducer'
 import userReducer from './reducers/userReducer'
 import connectionSlice from './reducers/connectionSlice'
-
+import loginSlice from './reducers/loginSlice'
 
 
 
@@ -16,7 +16,8 @@ const reducer = combineReducers({
     menu: menuReducer,
     message: messageReducer,
     connection: connectionSlice,
-    user: userReducer
+    user: userReducer,
+    login: loginSlice,
 
 })
 

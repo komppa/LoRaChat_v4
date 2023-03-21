@@ -1,5 +1,4 @@
 import React from 'react'
-
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -8,24 +7,34 @@ import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
-
 import { useCallback } from 'react'
 import Particles from 'react-tsparticles'
 import type { Engine } from 'tsparticles-engine'
 import { loadFull } from 'tsparticles'
+import { useDispatch } from 'react-redux'
+import { loginUser } from '../state/reducers/loginSlice'
 
 
 const LoginPage = () => {
+
+    const dispatch = useDispatch()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     
         event.preventDefault()
         const data = new FormData(event.currentTarget)
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        })
-    
+
+        if (
+            data.get('username') == null ||
+            data.get('username') == ''
+        ) {
+            return
+        }
+
+        dispatch(loginUser(
+            data.get('username')?.toString() || ''
+        ))
+
     }
 
     const particlesInit = useCallback(async (engine: Engine) => {
@@ -158,10 +167,10 @@ const LoginPage = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Callsign"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField
