@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 // import { SystemProps } from '@mui/system'
 import { InputBase, Box, IconButton, Typography } from '@mui/material'
-import { Clear as  ClearIcon, Circle, Send as SendIcon } from '@mui/icons-material'
+import { Circle, Send as SendIcon } from '@mui/icons-material'
 import { Message } from '../state/reducers/messageReducer'
 
 

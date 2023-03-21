@@ -1,9 +1,7 @@
 import React from 'react'
 import {
-    List,
     ListItem,
     ListItemText,
-    Divider,
     ListItemButton,
 } from '@mui/material'
 
