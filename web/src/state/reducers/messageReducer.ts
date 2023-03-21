@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, ThunkAction, AnyAction } from '@reduxjs/toolkit'
+import { RootState } from '../store'
 
 
 export interface Message {
@@ -60,7 +61,7 @@ const messagesSlice = createSlice({
             }
 
         },
-        sendMessage: (state, action: PayloadAction<{ to: string, content: string }>) => {
+        addMessage: (state, action: PayloadAction<{ to: string, content: string }>) => {
             // New message sent by me
             state.push({
                 // TODO CRIT I do not know these ids, server should create these?
@@ -78,6 +79,21 @@ const messagesSlice = createSlice({
 })
 
 
-export const { addMessages, markMessageAsRead, sendMessage } = messagesSlice.actions
+export const { addMessages, markMessageAsRead, addMessage } = messagesSlice.actions
+
+export const sendMessage = (
+    payload: { to: string, content: string }
+): ThunkAction<void, RootState, unknown, AnyAction> => (
+    dispatch
+) => {
+    dispatch(addMessage(payload))
+    dispatch(sendWsServer({
+        from: 'Me',
+        to: payload.to,
+        content: payload.content,
+    }))
+}
+
+
 
 export default messagesSlice.reducer

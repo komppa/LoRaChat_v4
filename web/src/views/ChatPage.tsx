@@ -12,19 +12,25 @@ import SearchBar from '../components/SearchBar'
 import { MenuTitle } from '../components/MenuListButton'
 import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
-import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { useSelector, shallowEqual } from 'react-redux'
 import { setCurrentMenu } from '../state/reducers/menuReducer'
 import { sendMessage, connectWsServer, disconnectWsServer } from '../state/reducers/messageReducer'
 import { User } from '../state/reducers/userReducer'
+import { useAppDispatch } from '../state/store'
 
 const ChatPage = () => {
 
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const selectedContact = useSelector((state: any) => state.menu)
     const messages = useSelector((state: any) => state.message, shallowEqual)
     const users = useSelector((state: any) => state.user, shallowEqual)
 
-    const handleMessageSend = (newMessage: { to: string, content: string }) => dispatch(sendMessage(newMessage))
+    const currentUsername = useSelector((state: any) => state.login.username)
+    const connectionStatus = useSelector((state: any) => state.connection.status)
+
+    const handleMessageSend = (newMessage: { to: string, content: string }) => {
+        dispatch(sendMessage(newMessage))
+    }
 
     // Create a connection to websocket server 
     useEffect(() => {
@@ -57,7 +63,8 @@ const ChatPage = () => {
                     <br />
 
                     <MyAvatar
-                        callsign={'Komppa'}
+                        username={currentUsername}
+                        connectionStatus={connectionStatus}
                     />
 
                     <Divider

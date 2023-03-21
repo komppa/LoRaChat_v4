@@ -7,14 +7,13 @@ import AvatarCircle from './AvatarCircle'
 
 
 interface MyAvatarProps {
-    callsign: string
+    username: string
+    connectionStatus: string
 }
 
 
-const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
+const MyAvatar: React.FC<MyAvatarProps> = ({ username, connectionStatus }) => {
 
-    // TODO implement getter for this connection status string
-    const connectionString = 'connected to the network'
 
     // TODO implement getter for avatar color
 
@@ -33,7 +32,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 }}
             >
                 {/* Avatar circle */}
-                <AvatarCircle text={ callsign.charAt(0) } />
+                <AvatarCircle text={ username.charAt(0) } />
 
                 {/* Connection status LED */}
                 <Box
@@ -41,7 +40,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                         width: '20px',
                         height: '20px',
                         borderRadius: '50%',
-                        backgroundColor: 'green',
+                        backgroundColor: connectionStatus === 'connected' ? 'green' : 'red',
                         position: 'absolute',
                         bottom: 0,
                         right: 0,
@@ -50,14 +49,14 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ callsign }) => {
                 />
             </Box>
 
-            {/* Callsign */}
+            {/* Username */}
             <Typography variant="h4" component="div" sx={{ mt: 1, fontWeight: 'bold', color: 'white' }}>
-                { callsign }
+                { username }
             </Typography>
 
             {/* Connection status text */}
             <Typography variant="subtitle2" component="div" sx={{ mt: 0, fontStyle: 'italic', color: 'white' }}>
-                { connectionString }
+                { connectionStatus }
             </Typography>
 
         </Box>

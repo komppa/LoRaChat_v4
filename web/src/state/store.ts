@@ -1,5 +1,6 @@
-import { combineReducers     } from 'redux'
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers } from 'redux'
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
+import { useDispatch } from 'react-redux'
 // Middlewares
 import websocketMiddleware from './middlewares/websocketMiddleware'
 // Reducers
@@ -27,3 +28,16 @@ export const store = configureStore({
         getDefaultMiddleware().concat(websocketMiddleware),
     preloadedState: {}
 })
+
+export type AppDispatch = typeof store.dispatch
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+    ReturnType,
+    RootState,
+    unknown,
+    Action<string>
+>
+
+export type RootState = ReturnType<typeof store.getState>
+
+export const useAppDispatch = () => useDispatch<AppDispatch>() // Add this line
