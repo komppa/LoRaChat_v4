@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     CssBaseline,
     Grid,
@@ -14,7 +14,7 @@ import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setCurrentMenu } from '../state/reducers/menuReducer'
-import { sendMessage, connectWsServer } from '../state/reducers/messageReducer'
+import { sendMessage, connectWsServer, disconnectWsServer } from '../state/reducers/messageReducer'
 import { User } from '../state/reducers/userReducer'
 
 const ChatPage = () => {
@@ -27,7 +27,15 @@ const ChatPage = () => {
     const handleMessageSend = (newMessage: { to: string, content: string }) => dispatch(sendMessage(newMessage))
 
     // Create a connection to websocket server 
-    dispatch(connectWsServer())
+    useEffect(() => {
+
+        dispatch(connectWsServer())
+
+        return () => {
+            dispatch(disconnectWsServer())
+        }
+
+    }, [])
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
