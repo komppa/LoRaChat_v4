@@ -12,6 +12,10 @@ export interface Message {
 }
 
 
+// Action creators
+export const connectWsServer = () => ({ type: 'WS_CONNECT' })
+export const sendWsServer = (payload: any) => ({ type: 'WS_SEND_MESSAGE', payload: payload })
+
 const initialState: Message[] = []
 
 const messagesSlice = createSlice({

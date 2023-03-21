@@ -14,8 +14,7 @@ import ChatSelectButton from '../components/ChatSelectButton'
 import { ChatHeader, Chat, ChatInput } from '../components/Chat'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { setCurrentMenu } from '../state/reducers/menuReducer'
-import { addMessages, sendMessage } from '../state/reducers/messageReducer'
-import { addUsers } from '../state/reducers/userReducer'
+import { sendMessage, connectWsServer } from '../state/reducers/messageReducer'
 import { User } from '../state/reducers/userReducer'
 
 const ChatPage = () => {
@@ -27,25 +26,8 @@ const ChatPage = () => {
 
     const handleMessageSend = (newMessage: { to: string, content: string }) => dispatch(sendMessage(newMessage))
 
-    // Setup your WebSocket connection here
-    const websocket = new WebSocket('ws://localhost:8080')
-
-    websocket.onmessage = (event) => {
-        
-        const payload = JSON.parse(event.data)
-
-        // eslint-disable-next-line no-prototype-builtins
-        if (payload.hasOwnProperty('type') && payload.type === 'messages') {
-            dispatch(addMessages(payload.data))
-        }
-
-        // eslint-disable-next-line no-prototype-builtins
-        if (payload.hasOwnProperty('type') && payload.type === 'users') {
-            dispatch(addUsers(payload.data))
-        }
-
-    }
-
+    // Create a connection to websocket server 
+    dispatch(connectWsServer())
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
