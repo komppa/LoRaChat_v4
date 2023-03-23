@@ -72,13 +72,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online, onLogout }
                     alignItems: 'center',
                     padding: '1rem  '
                 }}
+                onClick={() => onLogout()}
             >
                 <Typography sx={{ mr: '1rem', fontSize: '1.2rem' }}>
                     Logout
                 </Typography>
                 <LogoutIcon
                     sx={{}}
-                    onClick={() => onLogout()}
                 />
             </Box>
 

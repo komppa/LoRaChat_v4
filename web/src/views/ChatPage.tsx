@@ -17,6 +17,7 @@ import { setCurrentMenu } from '../state/reducers/menuReducer'
 import { sendMessage, connectWsServer, disconnectWsServer } from '../state/reducers/messageReducer'
 import { User } from '../state/reducers/userReducer'
 import { useAppDispatch } from '../state/store'
+import { logoutUser } from '../state/reducers/loginSlice'
 
 
 const ChatPage = () => {
@@ -31,6 +32,10 @@ const ChatPage = () => {
 
     const handleMessageSend = (newMessage: { to: string, content: string }) => {
         dispatch(sendMessage(newMessage))
+    }
+
+    const handleLogout = () => {
+        dispatch(logoutUser())
     }
 
     // Create a connection to websocket server 
@@ -165,7 +170,7 @@ const ChatPage = () => {
                         height: '100vh',
                     }}
                 >
-                    <ChatHeader name={selectedContact} online={true} onLogout={() => null} />
+                    <ChatHeader name={selectedContact} online={true} onLogout={() => handleLogout()} />
                     <Chat selectedContact={selectedContact} messages={messages} />
                     <ChatInput selectedContact={selectedContact} onSubmit={handleMessageSend} />
                 </Box>
