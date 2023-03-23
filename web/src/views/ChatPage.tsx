@@ -18,6 +18,7 @@ import { sendMessage, connectWsServer, disconnectWsServer } from '../state/reduc
 import { User } from '../state/reducers/userReducer'
 import { useAppDispatch } from '../state/store'
 
+
 const ChatPage = () => {
 
     const dispatch = useAppDispatch()
@@ -64,7 +65,7 @@ const ChatPage = () => {
 
                     <MyAvatar
                         username={currentUsername}
-                        connectionStatus={connectionStatus}
+                        connection={connectionStatus}
                     />
 
                     <Divider
@@ -114,12 +115,16 @@ const ChatPage = () => {
                     <ChatSelectButton
                         name='Global chat group 1'
                         selected={selectedContact == 'Global chat group 1' ? true : false}
+                        online={null}
+                        rssi={null}
                         onClick={() => dispatch(setCurrentMenu('Global chat group 1'))}
                     />
 
                     <ChatSelectButton
                         name='Global chat group 2'
                         selected={selectedContact == 'Global chat group 2' ? true : false}
+                        online={null}
+                        rssi={null}
                         onClick={() => dispatch(setCurrentMenu('Global chat group 2'))}
                     />
 
@@ -132,6 +137,8 @@ const ChatPage = () => {
                                 key={ user.id }
                                 name={ user.username }
                                 selected={selectedContact === user.username ? true : false}
+                                online={user.online}
+                                rssi={user.rssi}
                                 onClick={() => dispatch(setCurrentMenu(user.username))}
                             />
                         ))
@@ -158,7 +165,7 @@ const ChatPage = () => {
                         height: '100vh',
                     }}
                 >
-                    <ChatHeader name={selectedContact} online={true} />
+                    <ChatHeader name={selectedContact} online={true} onLogout={() => null} />
                     <Chat selectedContact={selectedContact} messages={messages} />
                     <ChatInput selectedContact={selectedContact} onSubmit={handleMessageSend} />
                 </Box>

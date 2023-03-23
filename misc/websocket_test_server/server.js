@@ -38,6 +38,30 @@ wss.on("connection", ws => {
       ]
     }
 
+    const activeUsers2 = {
+      type: 'users',
+      data: [
+        {
+            username: "Sepi",
+            rssi: "-120",
+            online: true,
+            lastSeen: 0,
+        },
+        {
+            username: "Östermalm",
+            rssi: "-80",
+            online: true,
+            lastSeen: 0,
+        },
+        {
+            username: "Keinonen",
+            rssi: "-110",
+            online: true,
+            lastSeen: 0,
+        }
+      ]
+    }
+
 
     const messages = {
       type: 'messages',
@@ -85,6 +109,16 @@ wss.on("connection", ws => {
 
     // On connect, send out active users of the LRC network
     ws.send(JSON.stringify(activeUsers))
+
+    setInterval(() => {
+      ws.send(JSON.stringify(activeUsers))
+    }, 4000)
+
+    setTimeout(() => {
+      setInterval(() => {
+        ws.send(JSON.stringify(activeUsers2))
+      }, 4000)
+    }, 2000)
 
 
     ws.on("message", data => {

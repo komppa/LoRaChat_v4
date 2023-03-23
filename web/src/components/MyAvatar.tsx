@@ -4,15 +4,17 @@ import {
     Typography,
 } from '@mui/material'
 import AvatarCircle from './AvatarCircle'
+import ConnectionStatusCircle from './ConnectionStatusCircle'
+import { ConnectionState } from '../state/reducers/connectionSlice'
 
 
 interface MyAvatarProps {
     username: string
-    connectionStatus: string
+    connection: string
 }
 
 
-const MyAvatar: React.FC<MyAvatarProps> = ({ username, connectionStatus }) => {
+const MyAvatar: React.FC<MyAvatarProps> = ({ username, connection }) => {
 
 
     // TODO implement getter for avatar color
@@ -34,19 +36,9 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ username, connectionStatus }) => {
                 {/* Avatar circle */}
                 <AvatarCircle text={ username.charAt(0) } />
 
-                {/* Connection status LED */}
-                <Box
-                    sx={{
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        backgroundColor: connectionStatus === 'connected' ? 'green' : 'red',
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                        border: '1.5px solid black',
-                    }}
-                />
+                <ConnectionStatusCircle connectionStatus={
+                    connection === 'connected' ? { status: 'connected' } : { status: 'disconnected' }
+                } />                
             </Box>
 
             {/* Username */}
@@ -56,7 +48,7 @@ const MyAvatar: React.FC<MyAvatarProps> = ({ username, connectionStatus }) => {
 
             {/* Connection status text */}
             <Typography variant="subtitle2" component="div" sx={{ mt: 0, fontStyle: 'italic', color: 'white' }}>
-                { connectionStatus }
+                { connection }
             </Typography>
 
         </Box>

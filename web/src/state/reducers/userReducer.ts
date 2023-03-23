@@ -18,23 +18,28 @@ const messagesSlice = createSlice({
     reducers: {
         addUsers: (state, action: PayloadAction<User[]>) => {
 
-            action.payload.forEach((user: User) => {
+            // Since server returns users that are online each time, we need to add new users that are not in the state
+            // and update the online status to false for users that are already in the state but are not returned by the server
 
-                const existingUser = state.find((u) => u.username === user.username)
-
-                if (!existingUser) {
-                // New message, saving it to state
-                    state.push({
-                        id: user.id,
-                        username: user.username,
-                        rssi: user.rssi,
-                        online: user.online,
-                        lastSeen: user.lastSeen,
-                    })
+            action.payload.forEach((incomingUser) => {
+                const existingUser = state.find((user) => user.username === incomingUser.username)
+                if (existingUser) {
+                    existingUser.online = true
+                    existingUser.lastSeen = Date.now()
+                } else {
+                    state.push({ ...incomingUser, online: true, lastSeen: Date.now() })
                 }
-
             })
-
+        
+            // Mark users on state as offline that are not returned by the server
+            state.forEach((user) => {
+                const existingUser = action.payload.find((u) => u.username === user.username)
+                if (!existingUser) {
+                    user.online = false
+                    user.lastSeen = Date.now()
+                }
+            })
+            
         },
     },
 })

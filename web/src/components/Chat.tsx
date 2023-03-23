@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react'
 import { InputBase, Box, IconButton, Typography } from '@mui/material'
 import { Circle, Send as SendIcon } from '@mui/icons-material'
 import { Message } from '../state/reducers/messageReducer'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 
 interface ChatHeaderProps {
     name: string
     online: boolean
+    onLogout: () => void
 }
 
 interface ChatWindowProps {
@@ -21,7 +23,7 @@ interface ChatInputProps {
 }
 
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online, onLogout }) => {
 
     return (
         <Box
@@ -53,12 +55,33 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ name, online }) => {
             />
             <Typography
                 variant="body1"
-                sx={{ color: 'white' }}
+                sx={{ color: 'white', flex: 1 }}
             >
                 {
                     online ? 'Online' : 'Offline'
                 }
             </Typography>
+            <Box
+                sx={{
+                    '&:hover': {
+                        backgroundColor: '#465260',
+                    },
+                    color: 'white',
+                    borderRadius: '0.5rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '1rem  '
+                }}
+            >
+                <Typography sx={{ mr: '1rem', fontSize: '1.2rem' }}>
+                    Logout
+                </Typography>
+                <LogoutIcon
+                    sx={{}}
+                    onClick={() => onLogout()}
+                />
+            </Box>
+
         </Box>
     )
 
