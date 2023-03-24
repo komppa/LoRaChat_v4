@@ -4,7 +4,7 @@ import { InputBase, Box, IconButton, Typography } from '@mui/material'
 import { Circle, Send as SendIcon } from '@mui/icons-material'
 import { Message } from '../state/reducers/messageReducer'
 import LogoutIcon from '@mui/icons-material/Logout'
-
+import { useSelector } from 'react-redux'
 
 interface ChatHeaderProps {
     name: string
@@ -119,10 +119,13 @@ const ChatBubble: React.FC<Message> = ({ from, content, isCurrentUser }) => {
 export const Chat: React.FC<ChatWindowProps> = ({ messages, selectedContact }) => {
 
     const [filteredMessages, setFilteredMessages] = useState<Message[]>([])
+    const myUsername = useSelector((state: any) => state.login.username)
 
     useEffect(() => {
 
-        const filtered = messages.filter(message => message.from === selectedContact || (message.from === 'Me' && message.to === selectedContact))
+        const filtered = messages.filter(
+            message => message.from === selectedContact || (message.from === myUsername && message.to === selectedContact)
+        )
         setFilteredMessages(filtered)
 
     }, [messages, selectedContact])

@@ -4,7 +4,7 @@ import { addUsers } from '../reducers/userReducer'
 import { setConnectionStatus } from '../reducers/connectionSlice'
 
 
-const websocketMiddleware: Middleware = ({ dispatch }) => {
+const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
 
     let websocket: WebSocket | null = null
     let reconnectInterval: ReturnType<typeof setInterval> | null = null
@@ -18,11 +18,18 @@ const websocketMiddleware: Middleware = ({ dispatch }) => {
     
         dispatch(setConnectionStatus('connecting'))
     
-        websocket = new WebSocket('ws://localhost:8080')
+        websocket = new WebSocket('ws://localhost:8180/ws')
     
-        websocket.onopen = (event) => {
-            console.log('WebSocket connected:', event)
+        websocket.onopen = () => {
+            
+            // Set state to connected to show that we are connected to the server
             dispatch(setConnectionStatus('connected'))
+
+            // Send a message to the server that we are connected with our username
+            websocket?.send(JSON.stringify({
+                type: 'heartbeat',
+                data: getState().login.username,
+            }))
     
             if (reconnectInterval) {
                 clearInterval(reconnectInterval)
@@ -35,7 +42,10 @@ const websocketMiddleware: Middleware = ({ dispatch }) => {
 
             // eslint-disable-next-line no-prototype-builtins
             if (payload.hasOwnProperty('type') && payload.type === 'messages') {
-                dispatch(addMessages(payload.data))
+                dispatch(addMessages({
+                    messages: payload.data,
+                    myUsername: getState().login.username,
+                }))
             }
 
             // eslint-disable-next-line no-prototype-builtins
@@ -83,7 +93,9 @@ const websocketMiddleware: Middleware = ({ dispatch }) => {
         case 'WS_SEND_MESSAGE':
 
             if (websocket) {
-                websocket.send(JSON.stringify(action.payload))
+                websocket.send(JSON.stringify(
+                    { type: 'message', data: action.payload }
+                ))
             } else {
                 console.log('WebSocket is not connected')
             }

@@ -14,26 +14,18 @@ wss.on("connection", ws => {
         {
             username: "Jakke",
             rssi: "-97",
-            online: true,
-            lastSeen: 0,
         },
         {
             username: "Sepi",
             rssi: "-120",
-            online: true,
-            lastSeen: 0,
         },
         {
             username: "Östermalm",
             rssi: "-80",
-            online: true,
-            lastSeen: 0,
         },
         {
             username: "Keinonen",
             rssi: "-110",
-            online: true,
-            lastSeen: 0,
         }
       ]
     }
@@ -44,20 +36,14 @@ wss.on("connection", ws => {
         {
             username: "Sepi",
             rssi: "-120",
-            online: true,
-            lastSeen: 0,
         },
         {
             username: "Östermalm",
             rssi: "-80",
-            online: true,
-            lastSeen: 0,
         },
         {
             username: "Keinonen",
             rssi: "-110",
-            online: true,
-            lastSeen: 0,
         }
       ]
     }

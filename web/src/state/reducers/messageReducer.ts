@@ -12,6 +12,11 @@ export interface Message {
   isCurrentUser: boolean
 }
 
+interface MessagePayloadAction {
+    myUsername: string
+    messages: Message[]
+}
+
 
 // Action creators
 export const connectWsServer = () => ({ type: 'WS_CONNECT', payload: {} })
@@ -26,9 +31,9 @@ const messagesSlice = createSlice({
     name: 'messages',
     initialState,
     reducers: {
-        addMessages: (state, action: PayloadAction<Message[]>) => {
+        addMessages: (state, action: PayloadAction<MessagePayloadAction>) => {
 
-            action.payload.forEach((message: Message) => {
+            action.payload.messages.forEach((message: Message) => {
 
                 const existingMessage = state.find((m) => m.id === message.id)
 
@@ -43,7 +48,7 @@ const messagesSlice = createSlice({
                         receivedAt: Date.now(),
                         // TODO VERY CRIT, get current username and
                         // decide whether this is me
-                        isCurrentUser: message.from === 'Me' ? true : false,
+                        isCurrentUser: message.from === action.payload.myUsername ? true : false,
                     })
                 }
 
@@ -61,12 +66,12 @@ const messagesSlice = createSlice({
             }
 
         },
-        addMessage: (state, action: PayloadAction<{ to: string, content: string }>) => {
+        addMessage: (state, action: PayloadAction<{ from: string, to: string, content: string }>) => {
             // New message sent by me
             state.push({
                 // TODO CRIT I do not know these ids, server should create these?
                 id: (Math.floor(Math.random() * 255)).toString(),
-                from: 'Me',
+                from: action.payload.from,
                 to: action.payload.to,
                 content: action.payload.content,
                 // Just for my client
@@ -84,11 +89,15 @@ export const { addMessages, markMessageAsRead, addMessage } = messagesSlice.acti
 export const sendMessage = (
     payload: { to: string, content: string }
 ): ThunkAction<void, RootState, unknown, AnyAction> => (
-    dispatch
+    dispatch, getState
 ) => {
-    dispatch(addMessage(payload))
+    dispatch(addMessage({
+        ...payload,
+        // TODO ugly, fix this
+        from: getState().login.username || '',
+    }))
     dispatch(sendWsServer({
-        from: 'Me',
+        from: getState().login.username,
         to: payload.to,
         content: payload.content,
     }))
