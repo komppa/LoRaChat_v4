@@ -59,6 +59,21 @@ npm run start
 Open your browser and navigate to http://localhost:3000 to access the web user interface.
 Connect to the Wi-Fi network created by the LoRaChat firmware, and start chatting with your friends!
 
+## Compilating the firmware
+
+Navigate to the firmware directory.
+
+```bash
+cd LoRaChat/firmware
+```
+
+Install the required dependencies.
+
+```bash
+platformio run -e heltec_wifi_lora_32_V2    # For compiling real hardware
+platformio run -e wokwi_simulation          # For compiling Wokwi simulator
+```
+
 ## Contributing
 
 We welcome contributions to improve and expand the capabilities of LoRaChat. If you would like to contribute, please feel free to submit a pull request or open an issue on GitHub.
