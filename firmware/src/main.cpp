@@ -6,18 +6,21 @@
 
 #include <WiFi.h>
 #include <WiFiClient.h>
-// #include <Adafruit_SSD1306.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "heltec.h"
 
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH        128     // OLED display width, in pixels
+#define SCREEN_HEIGHT       64      // OLED display height, in pixels
+#define OLED_RESET          -1      // Reset pin # (or -1 if sharing Arduino reset pin)
 
-#define BAND    868E6  //you can set band here directly,e.g. 868E6,915E6,433E6
+#define BAND                868E6   //you can set band here directly,e.g. 868E6,915E6,433E6
+
+#define NODE_ID             "LoRa Chat node 1"
+#define WIFI_PASSWORD       "123456789"
+
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -37,27 +40,44 @@ String indexHtml() {
     return response;
 }
 
-// void send(String payload) {
-//     LoRa.beginPacket();
-//     LoRa.print(payload);
-//     LoRa.endPacket();
-//     LoRa.receive();
-// }
 
-// void onReceive(int packetSize) {
+void send(String payload) {
+    #ifdef SIMULATION
+    Serial.println("Sending: " + String(payload));
+    #else
+    LoRa.beginPacket();
+    LoRa.print(payload);
+    LoRa.endPacket();
+    LoRa.receive();
+    #endif
+}
 
-//     packet = "";
-//     packSize = String(packetSize, DEC);
+void onReceive(int packetSize) {
 
-//     while (LoRa.available())
-//     {
-//         packet += (char) LoRa.read();
-//     }
+    String packet = "";
+    String packSize = "";
 
-//     Serial.println(packet);
-//     rssi = String(LoRa.packetRssi(), DEC);
-//     receiveflag = true  ;
-// }
+    #ifdef SIMULATION
+    // Since we cannot use LoRa to receive, we use
+    // serial to receive the message
+    while (Serial.available())
+    {
+        packet += (char) Serial.read();
+    }
+    Serial.println("Received packet from Serial: " + String(packet));
+
+    #else
+    // We are using a real hardware, use LoRa to receive
+    while (LoRa.available())
+    {
+        packet += (char) LoRa.read();
+    }
+
+    Serial.println("Received packet from LoRa: " + String(packet));
+    // TODO use rssi
+    // rssi = String(LoRa.packetRssi(), DEC);
+    #endif
+}
 
 void sendMessageOut(String message) {
     Serial.println("@sendMessageOut: " + String(message));
@@ -151,31 +171,31 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
 void setup(void) {
 
-    // Serial.begin(115200);
+    
     Heltec.begin(
         true,   // DisplayEnable Enable
-        false,   // LoRa Enable
+        #ifdef SIMULATION
+        // On simulator, do no use LoRa
+        false,   // LoRa Disable on simulator
+        #else
+        true,   // LoRa Enable
+        #endif
         true,   // Serial Enable
-        false,   // LoRa use PABOOST
+        true,   // LoRa use PABOOST
         BAND    // LoRa RF working band
     );
 
-    // display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-    // display.clearDisplay();
-    // display.setTextColor(WHITE);
-    // display.setTextSize(1);
+    #ifdef SIMULATION
+    Serial.println("You are using the simulator");
+    #else
+    Serial.println("You are using the real hardware");
+    #endif
 
     Heltec.display->clear();
     Heltec.display->display();
+    
 
-    Heltec.display->drawString(0, 1, "test3");
-    Heltec.display->display();
-
-    // Heltec.display->setTextAlignment(TEXT_ALIGN_RIGHT);
-    // Heltec.display->drawString(10, 128, String(millis()));
-    // // write the buffer to the display
-    // Heltec.display->display();
-
+    #ifdef SIMULATION
     // To use wokwi gateway for testing API calls,
     // use the following Wokwi-GUEST network instead
     // of your own WiFi network
@@ -184,22 +204,31 @@ void setup(void) {
     while (WiFi.status() != WL_CONNECTED) {
         delay(100);
     }
+    #else
+    const char* ssid     = NODE_ID;
+    const char* password = WIFI_PASSWORD;
+    WiFi.softAP(ssid, password);
+    #endif
+
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/html", indexHtml());
     });
 
+    // WebSocket endpoint handler
     ws.onEvent(onWsEvent);
     server.addHandler(&ws);
 
+    // Start web server
     server.begin();
-    Serial.println("HTTP server started (http://localhost:8180)");
 
+    // If read hardware is used, the interrupt is attached
+    // for LoRa receive. Start also receiving LoRa messages.
+    #ifndef SIMULATION
+        LoRa.onReceive(onReceive);
+        LoRa.receive();
+    #endif
 
-    // attachInterrupt(0, interrupt_GPIO0, FALLING);
-    // LoRa.onReceive(onReceive);
-    // LoRa.receive();
-    
 }
 
 
