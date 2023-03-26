@@ -9,8 +9,8 @@
   "connections": [
     [ "esp:TX0", "$serialMonitor:RX", "", [] ],
     [ "esp:RX0", "$serialMonitor:TX", "", [] ],
-    [ "oled1:SCL", "esp:D22", "green", [ "v0" ] ],
-    [ "oled1:SDA", "esp:D21", "green", [ "v-19.2", "h-67", "v0.4" ] ],
+    [ "oled1:SCL", "esp:D15", "green", [ "v0" ] ],
+    [ "oled1:SDA", "esp:D4", "green", [ "v-19.2", "h-67", "v0.4" ] ],
     [ "oled1:GND", "esp:GND.1", "black", [ "v-40", "h-64.7", "v111.51" ] ],
     [ "oled1:VCC", "esp:3V3", "red", [ "v-28.8", "h-67.05", "v105.6" ] ]
   ],

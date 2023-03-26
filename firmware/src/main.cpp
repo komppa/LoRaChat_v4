@@ -6,18 +6,19 @@
 
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <Adafruit_SSD1306.h>
+// #include <Adafruit_SSD1306.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include "heltec.h"
 
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 
+#define BAND    868E6  //you can set band here directly,e.g. 868E6,915E6,433E6
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
@@ -35,6 +36,28 @@ String indexHtml() {
     )";
     return response;
 }
+
+// void send(String payload) {
+//     LoRa.beginPacket();
+//     LoRa.print(payload);
+//     LoRa.endPacket();
+//     LoRa.receive();
+// }
+
+// void onReceive(int packetSize) {
+
+//     packet = "";
+//     packSize = String(packetSize, DEC);
+
+//     while (LoRa.available())
+//     {
+//         packet += (char) LoRa.read();
+//     }
+
+//     Serial.println(packet);
+//     rssi = String(LoRa.packetRssi(), DEC);
+//     receiveflag = true  ;
+// }
 
 void sendMessageOut(String message) {
     Serial.println("@sendMessageOut: " + String(message));
@@ -128,16 +151,30 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
 void setup(void) {
 
-    Serial.begin(115200);
+    // Serial.begin(115200);
+    Heltec.begin(
+        true,   // DisplayEnable Enable
+        false,   // LoRa Enable
+        true,   // Serial Enable
+        false,   // LoRa use PABOOST
+        BAND    // LoRa RF working band
+    );
 
     // display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     // display.clearDisplay();
     // display.setTextColor(WHITE);
     // display.setTextSize(1);
 
-    // display.drawChar(0, 10, 'a', WHITE, 0, 1); // Drawing the character 'a' at (x, y) position with color WHITE and size 1
-    // display.display();
-    // display.drawChar(0, 30, 'c', WHITE, 0, 1);
+    Heltec.display->clear();
+    Heltec.display->display();
+
+    Heltec.display->drawString(0, 1, "test3");
+    Heltec.display->display();
+
+    // Heltec.display->setTextAlignment(TEXT_ALIGN_RIGHT);
+    // Heltec.display->drawString(10, 128, String(millis()));
+    // // write the buffer to the display
+    // Heltec.display->display();
 
     // To use wokwi gateway for testing API calls,
     // use the following Wokwi-GUEST network instead
@@ -157,6 +194,11 @@ void setup(void) {
 
     server.begin();
     Serial.println("HTTP server started (http://localhost:8180)");
+
+
+    // attachInterrupt(0, interrupt_GPIO0, FALLING);
+    // LoRa.onReceive(onReceive);
+    // LoRa.receive();
     
 }
 
