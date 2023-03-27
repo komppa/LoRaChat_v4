@@ -80,6 +80,13 @@ void onReceive(int packetSize) {
 }
 
 void sendMessageOut(String message) {
+    // Create a new JSON document and add the message payload
+    // into it under data property. The output will look like this:
+    // {
+    //     "type": "message",
+    //     "data": messagePayload
+    // }
+
     Serial.println("@sendMessageOut: " + String(message));
     // Send JSON response over LoRa
     // TODO LORA
@@ -133,10 +140,12 @@ void handleReceivedMessage(AsyncWebSocketClient *client, uint8_t *data, size_t l
     if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "message") {
         // Check if the JSON object has the "data" property
         if (jsonDoc.containsKey("data")) {
-            // Print the "data" property to the Serial output
-            String message = jsonDoc["data"].as<String>();
+            
+            String outputString;
+            serializeJson(jsonDoc, outputString);
 
-            sendMessageOut(message);
+
+            sendMessageOut(outputString);
             
         } else {
             Serial.println("JSON message does not contain the 'data' property");
