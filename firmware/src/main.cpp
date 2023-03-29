@@ -177,6 +177,12 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     }
 }
 
+void serveFile(AsyncWebServerRequest *request, const char *contentType, const uint8_t *content, size_t contentLength) {
+    AsyncWebServerResponse *response = request->beginResponse_P(200, contentType, content, contentLength);
+    response->addHeader("Content-Encoding", "gzip");
+    request->send(response);
+}
+
 
 void setup(void) {
 
@@ -201,6 +207,7 @@ void setup(void) {
     #endif
 
     Heltec.display->clear();
+    Heltec.display->drawString(0 ,0 ,"Welcome to LoRa Chat!");
     Heltec.display->display();
     
 
