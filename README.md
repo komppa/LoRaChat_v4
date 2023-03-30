@@ -74,6 +74,35 @@ platformio run -e heltec_wifi_lora_32_V2    # For compiling real hardware
 platformio run -e wokwi_simulation          # For compiling Wokwi simulator
 ```
 
+## Merging frontend to PRGMEM of firmware
+
+Convert react app build files to header files for PROGMEM.
+
+```bash
+find . -type f -exec sh -c 'gzip -9 "{}"' \;     # In build directory
+find . -type f -exec sh -c 'FILE="{}"; OUT="../header_files/$(echo "${FILE#./}" | tr "/" "_" | tr "." "_").h"; xxd -i "${FILE}" > "${OUT}"' \;
+```
+
+## Commands to modify the partitions on the device
+
+
+```bash
+
+pio run -e heltec_wifi_lora_32_V2
+
+python3 -m esptool --port /dev/ttyUSB1 read_flash 0x8000 0xC00 partition_table.bin
+
+gen_esp32part.py partition_table.bin > partition_table.csv
+
+. $IDF_PATH/export.sh
+$IDF_PATH/components/spiffs/spiffsgen.py 4194304 data spiffs.bin
+$IDF_PATH/components/spiffs/spiffsgen.py 1572864 data spiffs.bin
+
+esptool.py erase_flash
+
+esptool.py --chip esp32 --port /dev/ttyUSB1 --baud 921600 write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 .pio/build/heltec_wifi_lora_32_V2/bootloader.bin 0x8000 .pio/build/heltec_wifi_lora_32_V2/partitions.bin 0x10000 .pio/build/heltec_wifi_lora_32_V2/firmware.bin 0x310000 spiffs.bin
+```
+
 ## Contributing
 
 We welcome contributions to improve and expand the capabilities of LoRaChat. If you would like to contribute, please feel free to submit a pull request or open an issue on GitHub.
