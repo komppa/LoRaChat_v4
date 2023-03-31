@@ -232,13 +232,31 @@ void setup(void) {
     WiFi.softAP(ssid, password);
     #endif
 
-
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, "text/html", indexHtml());
+        if (SPIFFS.exists("/index.html")) {
+            request->send(SPIFFS, "/index.html", "text/html");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists("/index.html")) {
+            request->send(SPIFFS, "/index.html", "text/html");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on("/manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists("/manifest.json")) {
+            request->send(SPIFFS, "/manifest.json", "text/json");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
     });
 
     server.on(MAIN_CSS, HTTP_GET, [](AsyncWebServerRequest *request) {
-        Serial.println("Poked /static/css/main.css");
         if (SPIFFS.exists(MAIN_CSS)) {
             request->send(SPIFFS, MAIN_CSS, "text/css");
         } else {
