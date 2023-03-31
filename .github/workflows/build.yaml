@@ -20,15 +20,50 @@ jobs:
       with:
         python-version: 3.x
 
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
     - name: Install PlatformIO
       run: |
         python -m pip install --upgrade pip
         pip install platformio
 
+    - name: Install dependencies and build React app
+      run: |
+        cd web
+        npm install
+        CI=false npm run build
+
+    - name: Create SPIFFS binary
+      run: |
+        echo $PWD
+        rm web/build/static/js/*.LICENSE.txt
+        docker run --rm -v $PWD/web:/project -w /project espressif/idf python /opt/esp/idf/components/spiffs/spiffsgen.py 4194304 build spiffs.bin
+        echo "PWD"
+        ls $PWD
+        echo "WEB"
+        ls $PWD/web
+        echo "FIRMWARE"
+        ls $PWD/firmware
+        cp web/spiffs.bin firmware/.
+        echo "COPIED"
+        ls $PWD/firmware
+
+    - name: Set precompiler macros to match web build files
+      run: |
+        cd firmware
+        python frontend_file_hashes_to_precompiler.py
+
     - name: Build ESP32 project
       run: |
         cd firmware
         platformio run -e heltec_wifi_lora_32_V2
+
+    - name: Create merged-flash.bin
+      run: |
+        docker run --rm -v $PWD/firmware:/project -w /project espressif/idf esptool.py --chip ESP32 merge_bin -o merged-flash.bin --flash_mode dio --flash_size 8MB 0x1000 .pio/build/heltec_wifi_lora_32_V2/bootloader.bin 0x8000 .pio/build/heltec_wifi_lora_32_V2/partitions.bin 0x10000 .pio/build/heltec_wifi_lora_32_V2/firmware.bin 0x310000 spiffs.bin
 
     - name: Update version
       run: |
@@ -71,3 +106,13 @@ jobs:
         asset_path: firmware/.pio/build/heltec_wifi_lora_32_V2/firmware.zip
         asset_name: firmware_v${{ env.NEW_VERSION }}.zip
         asset_content_type: application/zip
+
+    - name: Upload merged-flash.bin to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: firmware/merged-flash.bin
+        asset_name: merged-flash_v${{ env.NEW_VERSION }}.bin
+        asset_content_type: application/octet-stream

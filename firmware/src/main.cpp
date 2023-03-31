@@ -10,6 +10,8 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "heltec.h"
+#include <SPIFFS.h>
+#include <FS.h>
 
 
 #define SCREEN_WIDTH        128     // OLED display width, in pixels
@@ -229,6 +231,31 @@ void setup(void) {
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/html", indexHtml());
+    });
+
+    server.on(MAIN_CSS, HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Poked /static/css/main.css");
+        if (SPIFFS.exists(MAIN_CSS)) {
+            request->send(SPIFFS, MAIN_CSS, "text/css");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on(MAIN_JS, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(MAIN_JS)) {
+            request->send(SPIFFS, MAIN_JS, "text/javascript");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on(CHUNK_JS, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(CHUNK_JS)) {
+            request->send(SPIFFS, CHUNK_JS, "text/javascript");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
     });
 
     // WebSocket endpoint handler
