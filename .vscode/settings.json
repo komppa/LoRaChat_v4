@@ -2,5 +2,21 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true 
     },
-    "eslint.validate": ["javascript"]
+    "eslint.validate": [
+        "javascript"
+    ],
+    "files.associations": {
+        "*.tcc": "cpp",
+        "fstream": "cpp",
+        "*.ipp": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "regex": "cpp"
+    }
 }

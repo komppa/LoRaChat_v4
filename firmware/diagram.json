@@ -3,7 +3,17 @@
   "author": "Komppa",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 14.97, "left": -119.27, "attrs": {} },
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 14.97,
+      "left": -119.27,
+      "attrs": {
+        "flashSize": "8",
+        "fullBoot": "1",
+        "firmwareOffset": "0"
+      }
+    },
     { "type": "board-ssd1306", "id": "oled1", "top": 72.89, "left": 27.84, "attrs": {} }
   ],
   "connections": [
