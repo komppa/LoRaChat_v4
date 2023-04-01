@@ -230,6 +230,12 @@ void setup(void) {
     const char* ssid     = NODE_ID;
     const char* password = WIFI_PASSWORD;
     WiFi.softAP(ssid, password);
+
+    Serial.println();
+    Heltec.display->clear();
+    Heltec.display->drawString(0 ,0 ,String(WiFi.localIP().toString()));
+    Heltec.display->display();
+    
     #endif
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -256,7 +262,7 @@ void setup(void) {
         }
     });
 
-    server.on(MAIN_CSS, HTTP_GET, [](AsyncWebServerRequest *request) {
+    server.on(MAIN_CSS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
         if (SPIFFS.exists(MAIN_CSS)) {
             request->send(SPIFFS, MAIN_CSS, "text/css");
         } else {
@@ -264,7 +270,7 @@ void setup(void) {
         }
     });
 
-    server.on(MAIN_JS, HTTP_GET, [](AsyncWebServerRequest *request) {
+    server.on(MAIN_JS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
         if (SPIFFS.exists(MAIN_JS)) {
             request->send(SPIFFS, MAIN_JS, "text/javascript");
         } else {
@@ -272,9 +278,25 @@ void setup(void) {
         }
     });
 
-    server.on(CHUNK_JS, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(CHUNK_JS)) {
-            request->send(SPIFFS, CHUNK_JS, "text/javascript");
+    server.on(CHUNK_JS_PATH_1, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(CHUNK_JS_1)) {
+            request->send(SPIFFS, CHUNK_JS_1, "text/javascript");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on(CHUNK_JS_PATH_2, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(CHUNK_JS_2)) {
+            request->send(SPIFFS, CHUNK_JS_2, "text/javascript");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+
+    server.on(CHUNK_JS_PATH_3, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(CHUNK_JS_3)) {
+            request->send(SPIFFS, CHUNK_JS_3, "text/javascript");
         } else {
             request->send(404, "text/plain", "File not found");
         }
