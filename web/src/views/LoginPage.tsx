@@ -8,11 +8,13 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { useCallback } from 'react'
-import Particles from 'react-tsparticles'
 import type { Engine } from 'tsparticles-engine'
 import { loadFull } from 'tsparticles'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../state/reducers/loginSlice'
+
+
+const Particles = React.lazy(() => import('react-tsparticles'))
 
 
 const LoginPage = () => {

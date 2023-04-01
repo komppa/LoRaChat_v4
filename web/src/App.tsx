@@ -1,8 +1,10 @@
-import React from 'react'
-import ChatPage from './views/ChatPage'
+import React, { Suspense } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useSelector } from 'react-redux'
 import LoginPage from './views/LoginPage'
+
+
+const ChatPage = React.lazy(() => import('./views/ChatPage'))
 
 
 const theme = createTheme({
@@ -21,9 +23,13 @@ const App = () => {
             {
                 isLoggedIn
                     ?
-                    <ChatPage />
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <ChatPage />
+                    </Suspense>
                     :
-                    <LoginPage />
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <LoginPage />
+                    </Suspense>
             }
         </ThemeProvider>
     )
