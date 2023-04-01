@@ -28,8 +28,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false IMAGE_INLINE_SIZE_LIMIT=0 react-scripts build",
+    "start": "craco start",
+    "build": "GENERATE_SOURCEMAP=false IMAGE_INLINE_SIZE_LIMIT=0 craco build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "ci": "npm run build"
@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@mui/types": "^7.2.3",
     "@types/redux": "^3.6.0",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
