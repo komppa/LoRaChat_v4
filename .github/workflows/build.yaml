@@ -39,7 +39,7 @@ jobs:
     - name: Set precompiler macros to match web build files
       run: |
         cd firmware
-        python frontend_file_hashes_to_precompiler.py
+        python build_flag_setter.py
 
     - name: Create SPIFFS binary
       run: |

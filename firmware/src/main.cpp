@@ -185,6 +185,15 @@ void serveFile(AsyncWebServerRequest *request, const char *contentType, const ui
     request->send(response);
 }
 
+void setupServerRoute(const char* path, const char* filename) {
+    server.on(path, HTTP_GET, [filename](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(filename)) {
+            request->send(SPIFFS, filename, "text/css");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
+    });
+}
 
 void setup(void) {
 
@@ -262,46 +271,166 @@ void setup(void) {
         }
     });
 
-    server.on(MAIN_CSS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(MAIN_CSS)) {
-            request->send(SPIFFS, MAIN_CSS, "text/css");
+    server.on(CSS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists(CSS)) {
+            request->send(SPIFFS, CSS, "text/css");
         } else {
             request->send(404, "text/plain", "File not found");
         }
     });
 
-    server.on(MAIN_JS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(MAIN_JS)) {
-            request->send(SPIFFS, MAIN_JS, "text/javascript");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
 
-    server.on(CHUNK_JS_PATH_1, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(CHUNK_JS_1)) {
-            request->send(SPIFFS, CHUNK_JS_1, "text/javascript");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
-    server.on(CHUNK_JS_PATH_2, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(CHUNK_JS_2)) {
-            request->send(SPIFFS, CHUNK_JS_2, "text/javascript");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
-    server.on(CHUNK_JS_PATH_3, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(CHUNK_JS_3)) {
-            request->send(SPIFFS, CHUNK_JS_3, "text/javascript");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
+    #if JS_COUNT >= 1
+    setupServerRoute(JS_PATH_1, JS_1);
+    #endif
+    #if JS_COUNT >= 2
+        setupServerRoute(JS_PATH_2, JS_2);
+    #endif
+    #if JS_COUNT >= 3
+        setupServerRoute(JS_PATH_3, JS_3);
+    #endif
+    #if JS_COUNT >= 4
+        setupServerRoute(JS_PATH_4, JS_4);
+    #endif
+    #if JS_COUNT >= 5
+        setupServerRoute(JS_PATH_5, JS_5);
+    #endif
+    #if JS_COUNT >= 6
+        setupServerRoute(JS_PATH_6, JS_6);
+    #endif
+    #if JS_COUNT >= 7
+        setupServerRoute(JS_PATH_7, JS_7);
+    #endif
+    #if JS_COUNT >= 8
+        setupServerRoute(JS_PATH_8, JS_8);
+    #endif
+    #if JS_COUNT >= 9
+        setupServerRoute(JS_PATH_9, JS_9);
+    #endif
+    #if JS_COUNT >= 10
+        setupServerRoute(JS_PATH_10, JS_10);
+    #endif
+    #if JS_COUNT >= 11
+        setupServerRoute(JS_PATH_11, JS_11);
+    #endif
+    #if JS_COUNT >= 12
+        setupServerRoute(JS_PATH_12, JS_12);
+    #endif
+    #if JS_COUNT >= 13
+        setupServerRoute(JS_PATH_13, JS_13);
+    #endif
+    #if JS_COUNT >= 14
+        setupServerRoute(JS_PATH_14, JS_14);
+    #endif
+    #if JS_COUNT >= 15
+        setupServerRoute(JS_PATH_15, JS_15);
+    #endif
+    #if JS_COUNT >= 16
+        setupServerRoute(JS_PATH_16, JS_16);
+    #endif
+    #if JS_COUNT >= 17
+        setupServerRoute(JS_PATH_17, JS_17);
+    #endif
+    #if JS_COUNT >= 18
+        setupServerRoute(JS_PATH_18, JS_18);
+    #endif
+    #if JS_COUNT >= 19
+        setupServerRoute(JS_PATH_19, JS_19);
+    #endif
+    #if JS_COUNT >= 20
+        setupServerRoute(JS_PATH_20, JS_20);
+    #endif
+    #if JS_COUNT >= 21
+        setupServerRoute(JS_PATH_21, JS_21);
+    #endif
+    #if JS_COUNT >= 22
+        setupServerRoute(JS_PATH_22, JS_22);
+    #endif
+    #if JS_COUNT >= 23
+        setupServerRoute(JS_PATH_23, JS_23);
+    #endif
+    #if JS_COUNT >= 24
+        setupServerRoute(JS_PATH_24, JS_24);
+    #endif
+    #if JS_COUNT >= 25
+        setupServerRoute(JS_PATH_25, JS_25);
+    #endif
+    #if JS_COUNT >= 26
+        setupServerRoute(JS_PATH_26, JS_26);
+    #endif
+    #if JS_COUNT >= 27
+        setupServerRoute(JS_PATH_27, JS_27);
+    #endif
+    #if JS_COUNT >= 28
+        setupServerRoute(JS_PATH_28, JS_28);
+    #endif
+    #if JS_COUNT >= 29
+        setupServerRoute(JS_PATH_29, JS_29);
+    #endif
+    #if JS_COUNT >= 30
+        setupServerRoute(JS_PATH_30, JS_30);
+    #endif
+    #if JS_COUNT >= 31
+        setupServerRoute(JS_PATH_31, JS_31);
+    #endif
+    #if JS_COUNT >= 32
+        setupServerRoute(JS_PATH_32, JS_32);
+    #endif
+    #if JS_COUNT >= 33
+        setupServerRoute(JS_PATH_33, JS_33);
+    #endif
+    #if JS_COUNT >= 34
+        setupServerRoute(JS_PATH_34, JS_34);
+    #endif
+    #if JS_COUNT >= 35
+        setupServerRoute(JS_PATH_35, JS_35);
+    #endif
+    #if JS_COUNT >= 36
+        setupServerRoute(JS_PATH_36, JS_36);
+    #endif
+    #if JS_COUNT >= 37
+        setupServerRoute(JS_PATH_37, JS_37);
+    #endif
+    #if JS_COUNT >= 38
+        setupServerRoute(JS_PATH_38, JS_38);
+    #endif
+    #if JS_COUNT >= 39
+        setupServerRoute(JS_PATH_39, JS_39);
+    #endif
+    #if JS_COUNT >= 40
+        setupServerRoute(JS_PATH_40, JS_40);
+    #endif
+    #if JS_COUNT >= 41
+        setupServerRoute(JS_PATH_41, JS_41);
+    #endif
+    #if JS_COUNT >= 42
+        setupServerRoute(JS_PATH_42, JS_42);
+    #endif
+    #if JS_COUNT >= 43
+        setupServerRoute(JS_PATH_43, JS_43);
+    #endif
+    #if JS_COUNT >= 44
+        setupServerRoute(JS_PATH_44, JS_44);
+    #endif
+    #if JS_COUNT >= 45
+        setupServerRoute(JS_PATH_45, JS_45);
+    #endif
+    #if JS_COUNT >= 46
+        setupServerRoute(JS_PATH_46, JS_46);
+    #endif
+    #if JS_COUNT >= 47
+        setupServerRoute(JS_PATH_47, JS_47);
+    #endif
+    #if JS_COUNT >= 48
+        setupServerRoute(JS_PATH_48, JS_48);
+    #endif
+    #if JS_COUNT >= 49
+        setupServerRoute(JS_PATH_49, JS_49);
+    #endif
+    #if JS_COUNT >= 50
+        setupServerRoute(JS_PATH_50, JS_50);
+    #endif
+    
     // WebSocket endpoint handler
     ws.onEvent(onWsEvent);
     server.addHandler(&ws);

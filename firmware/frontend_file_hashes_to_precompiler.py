@@ -80,8 +80,8 @@ def main():
 
     print(content)
 
-    with open('platformio.ini', 'w') as pio_file:
-        pio_file.write(content)
+    # with open('platformio.ini', 'w') as pio_file:
+    #     pio_file.write(content)
 
 if __name__ == '__main__':
     main()
