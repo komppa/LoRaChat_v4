@@ -53,7 +53,7 @@ jobs:
 
     - name: Create merged-flash.bin
       run: |
-        docker run --rm -v $PWD/firmware:/project -w /project espressif/idf esptool.py --chip ESP32 merge_bin -o merged-flash.bin --flash_mode dio --flash_size 8MB 0x1000 .pio/build/heltec_wifi_lora_32_V2/bootloader.bin 0x8000 .pio/build/heltec_wifi_lora_32_V2/partitions.bin 0x10000 .pio/build/heltec_wifi_lora_32_V2/firmware.bin 0x310000 spiffs.bin
+        docker run --rm -v $PWD/firmware:/project -w /project espressif/idf esptool.py --chip ESP32 merge_bin -o merged-flash.bin --flash_mode dio --flash_size 8MB 0x1000 .pio/build/heltec/bootloader.bin 0x8000 .pio/build/heltec/partitions.bin 0x10000 .pio/build/heltec/firmware.bin 0x310000 spiffs.bin
 
     - name: Update version
       run: |
@@ -62,7 +62,7 @@ jobs:
 
     - name: Create zip archive
       run: |
-        cd firmware/.pio/build/heltec_wifi_lora_32_V2/
+        cd firmware/.pio/build/heltec/
         zip firmware.zip bootloader.bin partitions.bin firmware.bin
 
     - name: Create new release
@@ -83,7 +83,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: firmware/.pio/build/heltec_wifi_lora_32_V2/firmware.bin
+        asset_path: firmware/.pio/build/heltec/firmware.bin
         asset_name: firmware_v${{ env.NEW_VERSION }}.bin
         asset_content_type: application/octet-stream
 
@@ -93,7 +93,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GH_PAT }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: firmware/.pio/build/heltec_wifi_lora_32_V2/firmware.zip
+        asset_path: firmware/.pio/build/heltec/firmware.zip
         asset_name: firmware_v${{ env.NEW_VERSION }}.zip
         asset_content_type: application/zip
 
