@@ -263,6 +263,11 @@ void setup(void) {
         }
     });
 
+    // What files I have? Endpoit to tell that out
+    server.on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(200, "application/json", ALL_FILES);
+    });
+
     server.on("/manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {
         if (SPIFFS.exists("/manifest.json")) {
             request->send(SPIFFS, "/manifest.json", "text/json");

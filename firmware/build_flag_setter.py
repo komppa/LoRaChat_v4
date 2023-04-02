@@ -66,6 +66,12 @@ def main():
     build_flags += f'\n-D CSS="\\"/{css_file}\\""'
     build_flags += f'\n-D CSS_PATH="\\"/static/css/{css_file}\\""'
 
+    # Tell the files that are saved to the spiffs package
+    all_files = []
+    all_files.append(css_file)
+    all_files.extend(js_files)
+    build_flags += f'\n-D ALL_FILES="\\"{all_files}\\""'
+
     # Set the build flags for the real Heltec hardware
     config.set('env:heltec', 'build_flags', build_flags)
 
