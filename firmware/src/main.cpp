@@ -263,9 +263,13 @@ void setup(void) {
         }
     });
 
-    // What files I have? Endpoit to tell that out
-    server.on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
-        request->send(200, "application/json", ALL_FILES);
+    // What files I have? Endpoit to tell that out, for slow loader (web/public/index.html)
+    server.on("/asset-manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (SPIFFS.exists("/asset-manifest.json")) {
+            request->send(SPIFFS, "/asset-manifest.json", "text/json");
+        } else {
+            request->send(404, "text/plain", "File not found");
+        }
     });
 
     server.on("/manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {

@@ -16,6 +16,92 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <h2 id="loaderText">Loading LoRa Chat</h2>
     <div id="root"></div>
+    <script>
+
+      /**
+       * Loader for slow loading the bundled files from the ESP32
+       */
+
+      const fetchFiles = async () => {
+        try {
+          const response = await fetch('/asset-manifest.json');
+          const data = await response.json();
+          return data.entrypoints;
+        } catch (error) {
+          console.error('Failed to fetch files:', error);
+          return [];
+        }
+      };
+    
+      // const loadScript = (src) => {
+      //   return new Promise((resolve) => {
+      //     const script = document.createElement("script");
+      //     script.src = src;
+      //     script.onload = (a) => {
+      //       console.log(a)
+      //       resolve()
+      //     };
+      //     document.body.appendChild(script);
+      //   })
+      // }
+
+      const delay = (ms) => {
+        return new Promise((resolve) => setTimeout(() => resolve(), ms));
+      }
+
+      const loadScript = (src) => {
+        return new Promise(async (resolve) => {
+          try {
+            const response = await fetch(src);
+
+            if (response.ok) {
+              const fromCache = response.type === 'cached' || response.headers.get('x-cache') === 'HIT';
+              const scriptContent = await response.text();
+              const blob = new Blob([scriptContent], { type: 'text/javascript' });
+              const scriptUrl = URL.createObjectURL(blob);
+
+              const script = document.createElement('script');
+              script.src = scriptUrl;
+              script.onload = () => {
+                URL.revokeObjectURL(scriptUrl); // Clean up the Blob URL
+                resolve({ fromCache });
+              };
+              document.body.appendChild(script);
+            } else {
+              console.error('Failed to load:', src);
+              resolve({ fromCache: false });
+            }
+          } catch (error) {
+            console.error('Error loading script:', src, error);
+            resolve({ fromCache: false });
+          }
+        });
+      };
+
+    
+      (async () => {
+
+        const scriptsToLoad = await fetchFiles();
+
+        console.log("We did not have the latest version on cache, so we are going to load the scripts one by one")
+        let i = 0;
+        for (const src of scriptsToLoad) {
+          console.log(src)
+          i = i + 1;
+          document.getElementById("loaderText").innerHTML = "Loading LoRa Chat " + Math.round((i / scriptsToLoad.length) * 100) + "%";
+          if (!(await loadScript(src).fromCache)) {
+            console.log("wait some time becuase the file was not in cache")
+            await delay(750);
+          }
+        }
+
+        document.getElementById("loaderText").remove();
+        
+      })()
+
+    </script>
+    
   </body>
 </html>
