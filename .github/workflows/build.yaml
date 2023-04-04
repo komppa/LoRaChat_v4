@@ -63,7 +63,7 @@ jobs:
     - name: Create zip archive
       run: |
         cd firmware/.pio/build/heltec/
-        zip firmware.zip bootloader.bin partitions.bin firmware.bin
+        zip firmware.zip bootloader.bin partitions.bin firmware.bin ../../../spiffs.bin
 
     - name: Create new release
       id: create_release
