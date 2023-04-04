@@ -18,7 +18,7 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
     
         dispatch(setConnectionStatus('connecting'))
     
-        websocket = new WebSocket('ws://localhost:8180/ws')
+        websocket = new WebSocket('ws://192.168.4.1/ws')
     
         websocket.onopen = () => {
             

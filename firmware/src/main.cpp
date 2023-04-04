@@ -185,19 +185,9 @@ void serveFile(AsyncWebServerRequest *request, const char *contentType, const ui
     request->send(response);
 }
 
-void setupServerRoute(const char* path, const char* filename) {
-    server.on(path, HTTP_GET, [filename](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(filename)) {
-            request->send(SPIFFS, filename, "text/css");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-}
 
 void setup(void) {
 
-    
     Heltec.begin(
         true,   // DisplayEnable Enable
         #ifdef SIMULATION
@@ -247,197 +237,163 @@ void setup(void) {
     
     #endif
 
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists("/index.html")) {
-            request->send(SPIFFS, "/index.html", "text/html");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
-    server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists("/index.html")) {
-            request->send(SPIFFS, "/index.html", "text/html");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
+    server.serveStatic("/", SPIFFS, "/index.html").setCacheControl("max-age=86400");
+    server.serveStatic("/index.html", SPIFFS, "/index.html").setCacheControl("max-age=86400");
 
     // What files I have? Endpoit to tell that out, for slow loader (web/public/index.html)
-    server.on("/asset-manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists("/asset-manifest.json")) {
-            request->send(SPIFFS, "/asset-manifest.json", "text/json");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
-    server.on("/manifest.json", HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists("/manifest.json")) {
-            request->send(SPIFFS, "/manifest.json", "text/json");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
-    server.on(CSS_PATH, HTTP_GET, [](AsyncWebServerRequest *request) {
-        if (SPIFFS.exists(CSS)) {
-            request->send(SPIFFS, CSS, "text/css");
-        } else {
-            request->send(404, "text/plain", "File not found");
-        }
-    });
-
+    server.serveStatic("/asset-manifest.json", SPIFFS, "/asset-manifest.json").setCacheControl("max-age=86400");
+    server.serveStatic("/manifest.json", SPIFFS, "/manifest.json").setCacheControl("max-age=86400");
+    server.serveStatic(CSS_PATH, SPIFFS, CSS).setCacheControl("max-age=86400");
 
     #if JS_COUNT >= 1
-    setupServerRoute(JS_PATH_1, JS_1);
+        server.serveStatic(JS_PATH_1, SPIFFS, JS_1).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 2
-        setupServerRoute(JS_PATH_2, JS_2);
+        server.serveStatic(JS_PATH_2, SPIFFS, JS_2).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 3
-        setupServerRoute(JS_PATH_3, JS_3);
+        server.serveStatic(JS_PATH_3, SPIFFS, JS_3).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 4
-        setupServerRoute(JS_PATH_4, JS_4);
+        server.serveStatic(JS_PATH_4, SPIFFS, JS_4).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 5
-        setupServerRoute(JS_PATH_5, JS_5);
+        server.serveStatic(JS_PATH_5, SPIFFS, JS_5).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 6
-        setupServerRoute(JS_PATH_6, JS_6);
+        server.serveStatic(JS_PATH_6, SPIFFS, JS_6).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 7
-        setupServerRoute(JS_PATH_7, JS_7);
+        server.serveStatic(JS_PATH_7, SPIFFS, JS_7).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 8
-        setupServerRoute(JS_PATH_8, JS_8);
+        server.serveStatic(JS_PATH_8, SPIFFS, JS_8).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 9
-        setupServerRoute(JS_PATH_9, JS_9);
+        server.serveStatic(JS_PATH_9, SPIFFS, JS_9).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 10
-        setupServerRoute(JS_PATH_10, JS_10);
+        server.serveStatic(JS_PATH_10, SPIFFS, JS_10).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 11
-        setupServerRoute(JS_PATH_11, JS_11);
+        server.serveStatic(JS_PATH_11, SPIFFS, JS_11).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 12
-        setupServerRoute(JS_PATH_12, JS_12);
+        server.serveStatic(JS_PATH_12, SPIFFS, JS_12).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 13
-        setupServerRoute(JS_PATH_13, JS_13);
+        server.serveStatic(JS_PATH_13, SPIFFS, JS_13).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 14
-        setupServerRoute(JS_PATH_14, JS_14);
+        server.serveStatic(JS_PATH_14, SPIFFS, JS_14).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 15
-        setupServerRoute(JS_PATH_15, JS_15);
+        server.serveStatic(JS_PATH_15, SPIFFS, JS_15).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 16
-        setupServerRoute(JS_PATH_16, JS_16);
+        server.serveStatic(JS_PATH_16, SPIFFS, JS_16).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 17
-        setupServerRoute(JS_PATH_17, JS_17);
+        server.serveStatic(JS_PATH_17, SPIFFS, JS_17).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 18
-        setupServerRoute(JS_PATH_18, JS_18);
+        server.serveStatic(JS_PATH_18, SPIFFS, JS_18).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 19
-        setupServerRoute(JS_PATH_19, JS_19);
+        server.serveStatic(JS_PATH_19, SPIFFS, JS_19).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 20
-        setupServerRoute(JS_PATH_20, JS_20);
+        server.serveStatic(JS_PATH_20, SPIFFS, JS_20).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 21
-        setupServerRoute(JS_PATH_21, JS_21);
+        server.serveStatic(JS_PATH_21, SPIFFS, JS_21).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 22
-        setupServerRoute(JS_PATH_22, JS_22);
+        server.serveStatic(JS_PATH_22, SPIFFS, JS_22).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 23
-        setupServerRoute(JS_PATH_23, JS_23);
+        server.serveStatic(JS_PATH_23, SPIFFS, JS_23).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 24
-        setupServerRoute(JS_PATH_24, JS_24);
+        server.serveStatic(JS_PATH_24, SPIFFS, JS_24).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 25
-        setupServerRoute(JS_PATH_25, JS_25);
+        server.serveStatic(JS_PATH_25, SPIFFS, JS_25).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 26
-        setupServerRoute(JS_PATH_26, JS_26);
+        server.serveStatic(JS_PATH_26, SPIFFS, JS_26).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 27
-        setupServerRoute(JS_PATH_27, JS_27);
+        server.serveStatic(JS_PATH_27, SPIFFS, JS_27).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 28
-        setupServerRoute(JS_PATH_28, JS_28);
+        server.serveStatic(JS_PATH_28, SPIFFS, JS_28).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 29
-        setupServerRoute(JS_PATH_29, JS_29);
+        server.serveStatic(JS_PATH_29, SPIFFS, JS_29).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 30
-        setupServerRoute(JS_PATH_30, JS_30);
+        server.serveStatic(JS_PATH_30, SPIFFS, JS_30).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 31
-        setupServerRoute(JS_PATH_31, JS_31);
+        server.serveStatic(JS_PATH_31, SPIFFS, JS_31).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 32
-        setupServerRoute(JS_PATH_32, JS_32);
+        server.serveStatic(JS_PATH_32, SPIFFS, JS_32).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 33
-        setupServerRoute(JS_PATH_33, JS_33);
+        server.serveStatic(JS_PATH_33, SPIFFS, JS_33).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 34
-        setupServerRoute(JS_PATH_34, JS_34);
+        server.serveStatic(JS_PATH_34, SPIFFS, JS_34).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 35
-        setupServerRoute(JS_PATH_35, JS_35);
+        server.serveStatic(JS_PATH_35, SPIFFS, JS_35).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 36
-        setupServerRoute(JS_PATH_36, JS_36);
+        server.serveStatic(JS_PATH_36, SPIFFS, JS_36).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 37
-        setupServerRoute(JS_PATH_37, JS_37);
+        server.serveStatic(JS_PATH_37, SPIFFS, JS_37).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 38
-        setupServerRoute(JS_PATH_38, JS_38);
+        server.serveStatic(JS_PATH_38, SPIFFS, JS_38).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 39
-        setupServerRoute(JS_PATH_39, JS_39);
+        server.serveStatic(JS_PATH_39, SPIFFS, JS_39).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 40
-        setupServerRoute(JS_PATH_40, JS_40);
+        server.serveStatic(JS_PATH_40, SPIFFS, JS_40).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 41
-        setupServerRoute(JS_PATH_41, JS_41);
+        server.serveStatic(JS_PATH_41, SPIFFS, JS_41).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 42
-        setupServerRoute(JS_PATH_42, JS_42);
+        server.serveStatic(JS_PATH_42, SPIFFS, JS_42).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 43
-        setupServerRoute(JS_PATH_43, JS_43);
+        server.serveStatic(JS_PATH_43, SPIFFS, JS_43).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 44
-        setupServerRoute(JS_PATH_44, JS_44);
+        server.serveStatic(JS_PATH_44, SPIFFS, JS_44).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 45
-        setupServerRoute(JS_PATH_45, JS_45);
+        server.serveStatic(JS_PATH_45, SPIFFS, JS_45).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 46
-        setupServerRoute(JS_PATH_46, JS_46);
+        server.serveStatic(JS_PATH_46, SPIFFS, JS_46).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 47
-        setupServerRoute(JS_PATH_47, JS_47);
+        server.serveStatic(JS_PATH_47, SPIFFS, JS_47).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 48
-        setupServerRoute(JS_PATH_48, JS_48);
+        server.serveStatic(JS_PATH_48, SPIFFS, JS_48).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 49
-        setupServerRoute(JS_PATH_49, JS_49);
+        server.serveStatic(JS_PATH_49, SPIFFS, JS_49).setCacheControl("max-age=86400");
     #endif
     #if JS_COUNT >= 50
-        setupServerRoute(JS_PATH_50, JS_50);
+        server.serveStatic(JS_PATH_50, SPIFFS, JS_50).setCacheControl("max-age=86400");
     #endif
     
     // WebSocket endpoint handler
