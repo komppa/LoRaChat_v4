@@ -28,8 +28,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false IMAGE_INLINE_SIZE_LIMIT=0 craco build",
+    "start": "REACT_APP_SERVE_ENV=development react-scripts start",
+    "build": "REACT_APP_SERVE_ENV=production GENERATE_SOURCEMAP=false IMAGE_INLINE_SIZE_LIMIT=0 craco build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "ci": "npm run build"
