@@ -13,10 +13,59 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>LoRaChat</title>
+    <style>
+
+      #loader {
+        background-color: #282c34;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        color: white;
+        flex-direction: column;
+        text-align: center;
+      }
+  
+      .progress-bar {
+        background-color: #444;
+        border-radius: 5px;
+        width: 300px;
+        height: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+  
+      .progress {
+        background-color: #36a3eb;
+        height: 20px;
+        width: 25%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+      }
+  
+      #progress-text {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translateX(-50%);
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <h2 id="loaderText">Loading LoRa Chat</h2>
+    <div id="loader">
+      <h1>Loading LoRa Chat...  </h1>
+      <h3>Plase wait</h3>
+      <div class="progress-bar">
+        <div id="progress" class="progress">
+          <span id="progress-text"></span>
+        </div>
+      </div>
+    </div>
     <div id="root"></div>
     <script>
 
@@ -46,6 +95,32 @@
       //     document.body.appendChild(script);
       //   })
       // }
+
+
+      const updateProgress = (targetPercentage) => {
+
+        const progress = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+
+        let currentPercentage = parseFloat(progress.style.width) || 0;
+
+        const updatePercentage = () => {
+          if (Math.abs(targetPercentage - currentPercentage) < 1) {
+            currentPercentage = targetPercentage;
+          } else {
+            currentPercentage += (targetPercentage - currentPercentage) / 20;
+          }
+
+          progress.style.width = `${currentPercentage}%`;
+          progressText.textContent = `${Math.round(currentPercentage)}%`;
+
+          if (Math.round(currentPercentage) !== targetPercentage) {
+            requestAnimationFrame(updatePercentage);
+          }
+        };
+
+        requestAnimationFrame(updatePercentage);
+      };
 
       const delay = (ms) => {
         return new Promise((resolve) => setTimeout(() => resolve(), ms));
@@ -90,14 +165,14 @@
         for (const src of scriptsToLoad) {
           console.log(src)
           i = i + 1;
-          document.getElementById("loaderText").innerHTML = "Loading LoRa Chat " + Math.round((i / scriptsToLoad.length) * 100) + "%";
+          updateProgress((i / scriptsToLoad.length) * 100);
           if (!(await loadScript(src).fromCache)) {
             console.log("wait some time becuase the file was not in cache")
             await delay(750);
           }
         }
 
-        document.getElementById("loaderText").remove();
+        document.getElementById("loader").remove();
         
       })()
 
