@@ -17,8 +17,10 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
         }
     
         dispatch(setConnectionStatus('connecting'))
+
+        const serverAddr = location.hostname || '192.168.4.1'
     
-        websocket = new WebSocket('ws://192.168.4.1/ws')
+        websocket = new WebSocket(`ws://${serverAddr}/ws`)
     
         websocket.onopen = () => {
             
