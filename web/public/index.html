@@ -89,19 +89,6 @@
           return [];
         }
       };
-    
-      // const loadScript = (src) => {
-      //   return new Promise((resolve) => {
-      //     const script = document.createElement("script");
-      //     script.src = src;
-      //     script.onload = (a) => {
-      //       console.log(a)
-      //       resolve()
-      //     };
-      //     document.body.appendChild(script);
-      //   })
-      // }
-
 
       const updateProgress = (targetPercentage) => {
 
@@ -132,33 +119,57 @@
         return new Promise((resolve) => setTimeout(() => resolve(), ms));
       }
 
-      const loadScript = (src) => {
-        return new Promise(async (resolve) => {
-          try {
-            const response = await fetch(src);
+      const loadScript = async (src) => {
+        try {
 
-            if (response.ok) {
-              const fromCache = response.type === 'cached' || response.headers.get('x-cache') === 'HIT';
-              const scriptContent = await response.text();
-              const blob = new Blob([scriptContent], { type: 'text/javascript' });
-              const scriptUrl = URL.createObjectURL(blob);
+          // Based on request time we determine if the file is cached or not
+          const t0 = performance.now();
+          const response = await fetch(src);
+          const time = performance.now() - t0;
 
+          console.log(`Fetcing time for ${src} is ${time}ms`)
+
+          if (response.ok) {
+
+            const scriptContent = await response.text();
+
+            // TODO CRIT, how about css? 
+            // The CRA build has atleast one css file thats mime type is text/css, not text/javascript
+            const blob = new Blob([scriptContent], { type: 'text/javascript' });
+            const scriptUrl = URL.createObjectURL(blob);
+
+            return new Promise((resolve) => {
               const script = document.createElement('script');
               script.src = scriptUrl;
               script.onload = () => {
                 URL.revokeObjectURL(scriptUrl); // Clean up the Blob URL
-                resolve({ fromCache });
+                resolve({
+                  time: time
+                });
               };
               document.body.appendChild(script);
-            } else {
-              console.error('Failed to load:', src);
-              resolve({ fromCache: false });
-            }
-          } catch (error) {
-            console.error('Error loading script:', src, error);
-            resolve({ fromCache: false });
+            });
+          } else {
+            console.error('Failed to load:', src);
+            return {
+              time: time
+            };
           }
-        });
+        } catch (error) {
+          console.error('Error loading script:', src, error);
+
+          // One script failed to load, so the whole application
+          // is "corrupted" and we need to reload the page to
+          // get a fresh start. Cache will be used to load
+          // already loaded files faster (witout waiting in between fetches)
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+
+          return {
+            time: time
+          };
+        }
       };
 
     
@@ -166,16 +177,26 @@
 
         const scriptsToLoad = await fetchFiles();
 
-        console.log("We did not have the latest version on cache, so we are going to load the scripts one by one")
         let i = 0;
         for (const src of scriptsToLoad) {
           console.log(src)
           i = i + 1;
           updateProgress((i / scriptsToLoad.length) * 100);
-          if (!(await loadScript(src).fromCache)) {
-            console.log("wait some time becuase the file was not in cache")
-            await delay(750);
+
+          const result = await loadScript(src);
+
+          if (result.time > 50) {
+            console.log("wait some time because the file was not in cache");
+            await delay(1000);
           }
+
+          // ESP32 is choking on the load, so we wait a bit more
+          // to let it rest a little bit more
+          if (result.time > 500) {
+            console.log("LRC node is choking under this load, let it rest a while...");
+            await delay(2000);
+          }
+
         }
 
         document.getElementById("loader").remove();
