@@ -12,6 +12,7 @@
 #include "heltec.h"
 #include <SPIFFS.h>
 #include <FS.h>
+#include <Preferences.h>
 
 
 #define SCREEN_WIDTH        128     // OLED display width, in pixels
@@ -27,20 +28,7 @@
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-
-String indexHtml() {
-    String response = R"(
-        <html>
-            <head>
-                <title>LoRaChat</title>
-            </head>
-            <body>
-                <h1>Welcome to LoRa Chat!</h1>
-            </body>
-        </html>
-    )";
-    return response;
-}
+Preferences preferences;
 
 
 void send(String payload) {
@@ -200,6 +188,73 @@ void setup(void) {
         true,   // LoRa use PABOOST
         BAND    // LoRa RF working band
     );
+
+    Heltec.display->clear();
+    Heltec.display->drawString(0, 0, "Starting");
+    Heltec.display->drawString(0, 10, NODE_ID);
+    Heltec.display->display();
+
+    preferences.begin("lrc", false);
+
+    unsigned long start_time = millis();
+    String received_data = "";
+    bool parametrization_mode = false;
+    const unsigned long timeout = 3000;
+
+    while(millis() - start_time < timeout) {
+        if (Serial.available()) {
+            received_data += (char)Serial.read();
+            if (received_data == "NOT_MY_CAT") {
+                // Correct magic word received to start parametrization mode
+                parametrization_mode = true;
+                break;
+            }
+        }
+    }
+
+
+    if (parametrization_mode) {
+
+        Serial.println("Entering parametrization mode...");
+
+        Heltec.display->clear();
+        Heltec.display->drawString(0, 0, "Connected to the PC");
+        Heltec.display->drawString(0, 10, "Waiting parameters...");
+        Heltec.display->display();
+
+        unsigned long start_time = millis();
+        while (millis() - start_time < timeout) {
+            if (Serial.available()) {
+
+                // Reset timeout if new data is received
+                start_time = millis();
+
+                // Read and parse JSON input
+                String received_json = Serial.readString();
+                Serial.println(received_json);
+                StaticJsonDocument<256> doc;
+                deserializeJson(doc, received_json);
+
+                JsonArray array = doc.as<JsonArray>();
+                for (JsonObject item : array) {
+                    const char *type = item["type"];
+                    const char *key = item["key"];
+                    const char *value = item["value"];
+
+                    if (strcmp(type, "boolean") == 0) {
+                        bool val = strcmp(value, "true") == 0 ? true : false;
+                        preferences.putBool(key, val);
+                    }
+                    if (strcmp(type, "string") == 0) {
+                        preferences.putString(key, value);
+                    }
+                }
+            }
+        }
+
+        Serial.println("Parametrization mode timeout. Exiting...");
+    }
+
 
     #ifdef SIMULATION
     Serial.println("You are using the simulator");
