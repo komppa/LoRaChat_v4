@@ -15,14 +15,14 @@
 #include "config.h"
 
 
-#define SCREEN_WIDTH        128     // OLED display width, in pixels
-#define SCREEN_HEIGHT       64      // OLED display height, in pixels
-#define OLED_RESET          -1      // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_WIDTH                128     // OLED display width, in pixels
+#define SCREEN_HEIGHT               64      // OLED display height, in pixels
+#define OLED_RESET                  -1      // Reset pin # (or -1 if sharing Arduino reset pin)
 
-#define BAND                868E6   //you can set band here directly,e.g. 868E6,915E6,433E6
+#define BAND                        868E6   //you can set band here directly,e.g. 868E6,915E6,433E6
 
-#define NODE_ID             "LoRa Chat node 1"
-#define WIFI_PASSWORD       "123456789"
+#define NODE_ID                     "LoRa Chat node 1"
+#define DEFAULT_WIFI_PASSWORD       "123456789"
 
 
 AsyncWebServer server(80);
@@ -215,6 +215,7 @@ void setup(void) {
     }
 
     #ifdef SIMULATION
+
     // To use wokwi gateway for testing API calls,
     // use the following Wokwi-GUEST network instead
     // of your own WiFi network
@@ -223,17 +224,44 @@ void setup(void) {
     while (WiFi.status() != WL_CONNECTED) {
         delay(100);
     }
-    #else
-    const char* ssid     = NODE_ID;
-    const char* password = WIFI_PASSWORD;
-    WiFi.softAP(ssid, password);
 
-    Serial.println();
-    Heltec.display->clear();
-    Heltec.display->drawString(0 ,0 ,String(WiFi.localIP().toString()));
-    Heltec.display->display();
+    #else
+
+    if (preferences.getBool("WIFI_MODE_STATION", false) == true) {
+        
+        Serial.println("Node WiFi is in STATION mode");
+
+        if (preferences.getString("WIFI_SSID", "") == "") {
+            Serial.println("WARNING: No WiFi SSID configured but WiFi mode is set to STATION");
+        }
+
+        WiFi.begin(preferences.getString("WIFI_SSID", "").c_str(), preferences.getString("WIFI_PASSWORD", "").c_str());
+        // Wait for connection
+        while (WiFi.status() != WL_CONNECTED) {
+            Serial.println("Waiting connection to WiFi network " + String(preferences.getString("WIFI_SSID", "").c_str()));
+            delay(100);
+        }
+
+        Heltec.display->clear();
+        Heltec.display->drawString(0, 0, "Connected to WiFi " + String(preferences.getString("WIFI_SSID", "").c_str());
+        Heltec.display->drawString(0, 10, String(WiFi.localIP().toString()));
+        Heltec.display->display();
+        
+    } else {
+
+        Serial.println("Node WiFi is in ACCESS POINT mode");
+
+        if (preferences.getString("WIFI_SSID", "") == "") {
+            Serial.println("WARNING: No WiFi SSID configured. Using default SSID (nodeID) for AP mode");
+        }
+
+        WiFi.softAP(preferences.getString("WIFI_SSID", NODE_ID).c_str(), preferences.getString("WIFI_PASSWORD", DEFAULT_WIFI_PASSWORD).c_str());
+
+    }
+
+
     
-    #endif
+    #endif  // SIMULATION WiFi
 
     server.serveStatic("/", SPIFFS, "/index.html").setCacheControl("max-age=86400");
     server.serveStatic("/index.html", SPIFFS, "/index.html").setCacheControl("max-age=86400");

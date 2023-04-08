@@ -38,7 +38,7 @@ bool wait_configuration_mode() {
 
 void parametrization_mode(bool in_parametrization_mode, Preferences *preferences) {
 
-    if (parametrization_mode) {
+    if (in_parametrization_mode) {
 
         Serial.println("Entering parametrization mode...");
 
