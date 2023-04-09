@@ -31,6 +31,8 @@ AsyncWebSocket ws("/ws");
 
 Preferences preferences;
 
+String serial_buffer = "";
+
 
 void send(String payload) {
     #ifdef SIMULATION
@@ -228,7 +230,7 @@ void setup(void) {
 
     #else
 
-    if (preferences.getBool("WIFI_MODE_STATION", false) == true) {
+    if (preferences.getBool("WIFI_MODE", false) == true) {
         
         Serial.println("Node WiFi is in STATION mode");
 
@@ -283,4 +285,12 @@ void setup(void) {
 
 void loop(void) {
     delay(10);
+    
+    if (Serial.available()) {
+        serial_buffer += (char)Serial.read();
+        if (serial_buffer == "REBOOT") {
+            ESP.restart();
+        }
+    }
+        
 }
