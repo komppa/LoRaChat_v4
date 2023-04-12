@@ -230,15 +230,18 @@ void setup(void) {
 
     #else
 
-    if (preferences.getBool("WIFI_MODE", false) == true) {
+    if (preferences.getBool("WIFI_MODE_AP", true) == false) {
         
         Serial.println("Node WiFi is in STATION mode");
+        Heltec.display->clear();
+        Heltec.display->drawString(0 ,0 ,"Node WiFi is in STATION mode");
+        Heltec.display->display();
 
         if (preferences.getString("WIFI_SSID", "") == "") {
             Serial.println("WARNING: No WiFi SSID configured but WiFi mode is set to STATION");
         }
 
-        WiFi.begin(preferences.getString("WIFI_SSID", "").c_str(), preferences.getString("WIFI_PASSWORD", "").c_str());
+        WiFi.begin(preferences.getString("WIFI_SSID", "").c_str(), preferences.getString("WIFI_PASS", "").c_str());
         // Wait for connection
         while (WiFi.status() != WL_CONNECTED) {
             Serial.println("Waiting connection to WiFi network " + String(preferences.getString("WIFI_SSID", "").c_str()));
@@ -253,12 +256,15 @@ void setup(void) {
     } else {
 
         Serial.println("Node WiFi is in ACCESS POINT mode");
+        Heltec.display->clear();
+        Heltec.display->drawString(0 ,0 ,"Node WiFi is in ACCESS POINT mode");
+        Heltec.display->display();
 
         if (preferences.getString("WIFI_SSID", "") == "") {
             Serial.println("WARNING: No WiFi SSID configured. Using default SSID (nodeID) for AP mode");
         }
 
-        WiFi.softAP(preferences.getString("WIFI_SSID", NODE_ID).c_str(), preferences.getString("WIFI_PASSWORD", DEFAULT_WIFI_PASSWORD).c_str());
+        WiFi.softAP(preferences.getString("WIFI_SSID", NODE_ID).c_str(), preferences.getString("WIFI_PASS", DEFAULT_WIFI_PASSWORD).c_str());
 
     }
     
@@ -285,12 +291,4 @@ void setup(void) {
 
 void loop(void) {
     delay(10);
-    
-    if (Serial.available()) {
-        serial_buffer += (char)Serial.read();
-        if (serial_buffer == "REBOOT") {
-            ESP.restart();
-        }
-    }
-        
 }

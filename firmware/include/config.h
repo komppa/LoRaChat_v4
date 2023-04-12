@@ -8,8 +8,8 @@
 
 
 struct ConfigurableParameter {
-    const char *type;
-    const char *key;
+    String type;
+    String key;
     String value;
 };
 

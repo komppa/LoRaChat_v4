@@ -5,8 +5,8 @@
 #include "heltec.h"
 
 
-// If no activity in 3 seconds, timeout
-int parametrization_timeout = 3000;
+// If no activity in 3 seconds, when in param mode - timeout
+int parametrization_timeout = 3 * 60 * 1000;
 
 ConfigurableParameter parameters[3];
 size_t parameterCount = sizeof(parameters) / sizeof(ConfigurableParameter);
@@ -17,13 +17,31 @@ int init_preferences(Preferences *preferences) {
     // Open on read/write mode
     preferences->begin("lrc", false);
 
-    // Initialize the parameters array
-    parameters[0] = {"boolean", "WIFI_MODE", preferences->getBool("WIFI_MODE", true) ? "true" : "false"};
-    parameters[1] = {"string", "WIFI_SSID", preferences->getString("WIFI_SSID", "myssid")};
-    parameters[2] = {"string", "WIFI_PASSWORD", preferences->getString("WIFI_PASSWORD", "mypassword")};
+    if (!preferences->isKey("WIFI_MODE_AP")) {
+        preferences->putBool("WIFI_MODE_AP", true);
+    }
+
+    if (!preferences->isKey("WIFI_SSID")) {
+        preferences->putString("WIFI_SSID", "wifi_ssid");
+    }
+
+    if (!preferences->isKey("WIFI_PASS")) {
+        preferences->putString("WIFI_PASS", "wifi_password");
+    }
+
+    
+
+
+    bool wifi_mode_ap = preferences->getBool("WIFI_MODE_AP", true);
+    parameters[0] = {"boolean", "WIFI_MODE_AP", wifi_mode_ap ? "true" : "false"};
+
+    String wifi_ssid = preferences->getString("WIFI_SSID", "wifi_ssid");
+    parameters[1] = {"string", "WIFI_SSID", wifi_ssid};
+
+    String wifi_password = preferences->getString("WIFI_PASS", "wifi_password");
+    parameters[2] = {"string", "WIFI_PASS", wifi_password};
 
     return 0;
-
 }
 
 
@@ -33,7 +51,9 @@ bool wait_configuration_mode() {
     String received_data = "";
     bool parametrization_mode = false;
 
-    while(millis() - start_time < parametrization_timeout) {
+    // Param PC must send "NOT_MY_CAT" to start parametrization mode
+    // in 3 seconds
+    while(millis() - start_time < 3000) {
         if (Serial.available()) {
             received_data += (char)Serial.read();
             if (received_data == "NOT_MY_CAT") {
@@ -89,36 +109,32 @@ void parametrization_mode(bool in_parametrization_mode, Preferences *preferences
                 // Read and parse JSON input
                 String received_json = Serial.readString();
                 Serial.println(received_json);
-                StaticJsonDocument<256> doc;
+                StaticJsonDocument<1024> doc;
                 deserializeJson(doc, received_json);
 
                 JsonArray array = doc.as<JsonArray>();
                 for (JsonObject item : array) {
 
-                    const char *type = item["type"];
-                    const char *key = item["key"];
-                    const char *value = item["value"];
+                    String type = item["type"];
+                    String key = item["key"];
+                    String value = item["value"];
 
                     // Find the parameter with the matching key
                     for (size_t i = 0; i < parameterCount; i++) {
+                        if (parameters[i].key == key) {
 
-                        if (strcmp(parameters[i].key, key) == 0) {
-
-                            if (strcmp(type, "boolean") == 0) {
-                                bool val = strcmp(value, "true") == 0 ? true : false;
-                                preferences->putBool(key, val);
+                            if (type == "boolean") {
+                                bool val = value == "true" ? true : false;
+                                preferences->putBool(key.c_str(), val);
                                 parameters[i].value = val ? "true" : "false";
                             }
 
-                            if (strcmp(type, "string") == 0) {
-                                preferences->putString(key, value);
-                                parameters[i].value = String(value);
+                            if (type == "string") {
+                                preferences->putString(key.c_str(), value.c_str());
+                                parameters[i].value = value;
                             }
 
                             break;
-
-                        } else {
-                            Serial.println("Parameter with key \"" + String(parameters[i].key) + "\" not found");
                         }
                     } 
                 }
