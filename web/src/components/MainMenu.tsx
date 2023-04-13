@@ -2,7 +2,6 @@ import React from 'react'
 import {
     List,
 } from '@mui/material'
-import '../index.css'
 import { MenuTitle, MenuButton } from './MenuListButton'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
