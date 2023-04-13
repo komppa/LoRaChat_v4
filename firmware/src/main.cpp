@@ -31,10 +31,8 @@ AsyncWebSocket ws("/ws");
 
 Preferences preferences;
 
-String serial_buffer = "";
 
-
-void send(String payload) {
+void sendLoRa(String payload) {
     #ifdef SIMULATION
     Serial.println("Sending: " + String(payload));
     #else
@@ -45,10 +43,9 @@ void send(String payload) {
     #endif
 }
 
-void onReceive(int packetSize) {
+void onLoRaReceive(int packetSize) {
 
     String packet = "";
-    String packSize = "";
 
     #ifdef SIMULATION
     // Since we cannot use LoRa to receive, we use
@@ -70,110 +67,144 @@ void onReceive(int packetSize) {
     // TODO use rssi
     // rssi = String(LoRa.packetRssi(), DEC);
     #endif
+
+    // Check if the received packet is a JSON packet
+    StaticJsonDocument<1024> jsonDoc;
+
+    DeserializationError error = deserializeJson(jsonDoc, packet);
+
+    if (error) {
+        Serial.println("Failed to parse JSON message from LoRa");
+        return;
+    }
+
+    // Check the type of the JSON message
+    if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "message") {
+        // This is a message, send it to the WebSocket clients
+        // Currently, this is done straight away, but it should be converted
+        // from custom LoRa packet to JSON message in the future
+        ws.textAll(packet);
+    } else if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "hb") {
+        ws.textAll(packet);
+    } else {
+        Serial.println("Unknown JSON message type");
+    }
+
 }
 
-void sendMessageOut(String message) {
-    // Create a new JSON document and add the message payload
-    // into it under data property. The output will look like this:
-    // {
-    //     "type": "message",
-    //     "data": messagePayload
-    // }
+void sendLoRaMessageOut(String from, String to, String content) {
 
-    Serial.println("@sendMessageOut: " + String(message));
-    // Send JSON response over LoRa
-    // TODO LORA
-    // jsonResponse
-}
-
-void sendActiveUserOut(String username) {
-    // Prepare JSON response
     DynamicJsonDocument jsonDoc(1024);
-    jsonDoc["type"] = "activeusers";
-    jsonDoc["data"] = username;
+    jsonDoc["type"] = "message";
+    jsonDoc["data"]["from"] = from;
+    jsonDoc["data"]["to"] = to;
+    jsonDoc["data"]["content"] = content;
 
     String jsonResponse;
     serializeJson(jsonDoc, jsonResponse);
 
-    Serial.println("@sendActiveUserOut: " + String(jsonResponse));
+    sendLoRa(jsonResponse);
 
-    // Send JSON response over LoRa
-    // TODO LORA
-    // jsonResponse
 }
 
-void handleReceivedMessage(AsyncWebSocketClient *client, uint8_t *data, size_t len) {
+void sendLoRaActiveUserOut(String username) {
+
+    DynamicJsonDocument jsonDoc(1024);
+    JsonArray users = jsonDoc.createNestedArray("data");
+
+    jsonDoc["type"] = "hb";
+
+    // TODO now only the one username is sent out in an array
+    // but in the future, all the active users should be sent out
+    users.add(username);
+
+    String jsonResponse;
+    serializeJson(jsonDoc, jsonResponse);
+
+    sendLoRa(jsonResponse);
+
+}
+
+
+/**
+ * Handle received message from WebSocket.
+ * 
+*/
+void handleWsReceivedMessage(AsyncWebSocketClient *client, uint8_t *data, size_t len) {
 
     DynamicJsonDocument jsonDoc(1024);
     DeserializationError error = deserializeJson(jsonDoc, data, len);
 
     // Check for deserialization errors
     if (error) {
-        Serial.println("Failed to parse JSON message");
+        Serial.println("Failed to parse JSON message from WebSocket");
         return;
     }
 
     // Check whether the received payload is a heartbeat message
-    if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "heartbeat") {
+    // over WebSocket from the user interface
+    if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "hb") {
         // Check if the JSON object has the "data" property
         if (jsonDoc.containsKey("data")) {
             // Print the "data" property to the Serial output
             String username = jsonDoc["data"].as<String>();
             
-            sendActiveUserOut(username);
+            sendLoRaActiveUserOut(username);
             
         } else {
             Serial.println("JSON message does not contain the 'data' property");
         }
-    } else {
-        Serial.println("JSON message is not of type 'connection'");
+
+        return;
     }
 
     // Check whether the received payload is a new message from the user
     if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "message") {
         // Check if the JSON object has the "data" property
         if (jsonDoc.containsKey("data")) {
-            
-            String outputString;
-            serializeJson(jsonDoc, outputString);
 
+            // Correct message includes from, to and content properties
+            if (jsonDoc["data"].containsKey("from") && jsonDoc["data"].containsKey("to") && jsonDoc["data"].containsKey("content")) {
+                
+                String from = jsonDoc["data"]["from"].as<String>();
+                String to = jsonDoc["data"]["to"].as<String>();
+                String content = jsonDoc["data"]["content"].as<String>();
 
-            sendMessageOut(outputString);
-            
+                Serial.println("Received message from: " + from + ", to: " + to + ", content: " + content);
+
+                // Send the message to the other node
+                sendLoRaMessageOut(from, to, content);
+
+            } else {
+                Serial.println("JSON message does not contain the 'from', 'to' or 'content' property");
+            }
         } else {
             Serial.println("JSON message does not contain the 'data' property");
         }
-    } else {
-        Serial.println("JSON message is not of type 'connection'");
+
+        return;
     }
+
+    Serial.println("Received message over WebSocket but it is not a message or heartbeat message. Dropping it out.");
 
 }
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len) {
+
     if (type == WS_EVT_CONNECT) {
 
         Serial.printf("Client connected: %u\n", client->id());
 
-        // Prepare JSON response
-        DynamicJsonDocument jsonDoc(1024);
-        jsonDoc["message"] = " 123 Welcome to LoRa Chat WebSocket server!";
-
-        String jsonResponse;
-        serializeJson(jsonDoc, jsonResponse);
-
-        // Send JSON response to the connected client
-        client->text(jsonResponse);
     } else if (type == WS_EVT_DATA) {
-        handleReceivedMessage(client, data, len);
-    } else if (type == WS_EVT_DISCONNECT) {
-        Serial.printf("Client disconnected: %u\n", client->id());
-    }
-}
 
-void serveFile(AsyncWebServerRequest *request, const char *contentType, const uint8_t *content, size_t contentLength) {
-    AsyncWebServerResponse *response = request->beginResponse_P(200, contentType, content, contentLength);
-    response->addHeader("Content-Encoding", "gzip");
-    request->send(response);
+        handleWsReceivedMessage(client, data, len);
+
+    } else if (type == WS_EVT_DISCONNECT) {
+
+        Serial.printf("Client disconnected: %u\n", client->id());
+
+    }
+    
 }
 
 
@@ -226,6 +257,7 @@ void setup(void) {
     // Wait for connection
     while (WiFi.status() != WL_CONNECTED) {
         delay(100);
+        Serial.println("Connecting to Wokwi-GUEST network...");
     }
 
     #else
@@ -282,7 +314,7 @@ void setup(void) {
     // If read hardware is used, the interrupt is attached
     // for LoRa receive. Start also receiving LoRa messages.
     #ifndef SIMULATION
-        LoRa.onReceive(onReceive);
+        LoRa.onReceive(onLoRaReceive);
         LoRa.receive();
     #endif
 

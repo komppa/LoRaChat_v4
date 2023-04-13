@@ -16,8 +16,12 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
             websocket.close()
         }
     
+        // To indicate that we are trying to connect to the server.
+        // Shon under user initls under the user avatar
         dispatch(setConnectionStatus('connecting'))
 
+        // Get the server address from the location object
+        // or use the default address of the ESP32
         const serverAddr = location.hostname || '192.168.4.1'
     
         websocket = new WebSocket(`ws://${serverAddr}/ws`)
@@ -29,7 +33,7 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
 
             // Send a message to the server that we are connected with our username
             websocket?.send(JSON.stringify({
-                type: 'heartbeat',
+                type: 'hb',
                 data: getState().login.username,
             }))
     
