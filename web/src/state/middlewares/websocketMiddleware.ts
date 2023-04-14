@@ -47,7 +47,7 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
             const payload = JSON.parse(event.data)
 
             // eslint-disable-next-line no-prototype-builtins
-            if (payload.hasOwnProperty('type') && payload.type === 'messages') {
+            if (payload.hasOwnProperty('type') && payload.type === 'message') {
                 dispatch(addMessages({
                     messages: payload.data,
                     myUsername: getState().login.username,
@@ -55,7 +55,7 @@ const websocketMiddleware: Middleware = ({ dispatch, getState }) => {
             }
 
             // eslint-disable-next-line no-prototype-builtins
-            if (payload.hasOwnProperty('type') && payload.type === 'users') {
+            if (payload.hasOwnProperty('type') && payload.type === 'hb') {
                 dispatch(addUsers(payload.data))
             }
         }

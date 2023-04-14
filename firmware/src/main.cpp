@@ -83,8 +83,10 @@ void onLoRaReceive(int packetSize) {
         // This is a message, send it to the WebSocket clients
         // Currently, this is done straight away, but it should be converted
         // from custom LoRa packet to JSON message in the future
+        Serial.println("Received message message from LoRa");
         ws.textAll(packet);
     } else if (jsonDoc.containsKey("type") && jsonDoc["type"].as<String>() == "hb") {
+        Serial.println("Received heartbeat message from LoRa");
         ws.textAll(packet);
     } else {
         Serial.println("Unknown JSON message type");
@@ -323,4 +325,13 @@ void setup(void) {
 
 void loop(void) {
     delay(10);
+
+    // If we are using simulator (we do not have LoRa capabilities)
+    // we need to simulate the LoRa receive event when we receive
+    // a message from the Serial port
+    #ifdef SIMULATION
+        if (Serial.available()) {
+            onLoRaReceive(0);
+        }
+    #endif
 }
