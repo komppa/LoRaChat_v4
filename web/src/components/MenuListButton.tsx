@@ -9,7 +9,8 @@ import {
 interface MenuButtonProps{
     title: string,
     selected: boolean,
-    onClick: (route: string) => void,
+    onClick: () => void,
+    disabled?: boolean
 }
 
 const menuStyle = {
@@ -29,7 +30,7 @@ export const MenuTitle = (props: { title: string }) => (
     </ListItem>
 )
 
-export const MenuButton: React.FC<MenuButtonProps> = ({ title, selected, onClick }) => (
+export const MenuButton: React.FC<MenuButtonProps> = ({ title, selected, onClick, disabled = false }) => (
     <ListItemButton
         sx={{
             paddingLeft: 6,
@@ -39,7 +40,13 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ title, selected, onClick
                 backgroundColor: 'rgba(53, 61, 70, 0.33)',
             },
         }}
-        onClick={() => onClick('Menu Button 1.1')}
+        onClick={() => {
+            // Do not allow clicking if disabled
+            if (disabled) {
+                return
+            }
+            onClick()
+        }}
     >
         <ListItemText
             primary={ title }

@@ -19,16 +19,16 @@ const MainMenu = () => {
 
             <MenuTitle title='Chat' />
             <MenuButton title='All messages' selected={isSelected('/')} onClick={() => navigate('/')} />
-            <MenuButton title='Unread messages' selected={isSelected('/unread')} onClick={() => navigate('/unread')} />
-            <MenuButton title='Announcements' selected={isSelected('/announcements')} onClick={() => navigate('/announcements')} />
+            <MenuButton title='Unread messages' selected={isSelected('/unread')} onClick={() => navigate('/unread')} disabled />
+            <MenuButton title='Announcements' selected={isSelected('/announcements')} onClick={() => navigate('/announcements')} disabled />
 
             <MenuTitle title='Network' />
-            <MenuButton title='Sensors' selected={isSelected('/sensors')} onClick={() => navigate('/sensors')} />
-            <MenuButton title='Offnet' selected={isSelected('/offnet')} onClick={() => navigate('/offnet')} />
+            <MenuButton title='Sensors' selected={isSelected('/sensors')} onClick={() => navigate('/sensors')} disabled />
+            <MenuButton title='Offnet' selected={isSelected('/offnet')} onClick={() => navigate('/offnet')} disabled />
 
             <MenuTitle title='General' />
-            <MenuButton title='Help' selected={isSelected('/help')} onClick={() => navigate('/help')} />
-            <MenuButton title='Settings' selected={isSelected('/settings')} onClick={() => navigate('/settings')} />
+            <MenuButton title='Help' selected={isSelected('/help')} onClick={() => navigate('/help')} disabled />
+            <MenuButton title='Settings' selected={isSelected('/settings')} onClick={() => navigate('/settings')} disabled />
 
         </List>
     )
