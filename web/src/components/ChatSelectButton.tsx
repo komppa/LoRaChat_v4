@@ -1,12 +1,12 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import AvatarCircle from './AvatarCircle'
-import { SignalCellular4Bar } from '@mui/icons-material'
 import ConnectionStatusCircle from './ConnectionStatusCircle'
+import Rssi from './Rssi'
 
 const ChatSelectButton = (
     { name, selected, online, rssi, onClick }: 
-    { name: string, selected: boolean, online: boolean | null, rssi: string | null, onClick: () => void }
+    { name: string, selected: boolean, online: boolean | null, rssi: number | null, onClick: () => void }
 ) => {
 
     return (
@@ -53,7 +53,11 @@ const ChatSelectButton = (
             >
                 { name }
             </Typography>
-            <SignalCellular4Bar />
+            
+            {
+                // Chats like global chat groups do not have RSSI ATM
+                rssi !== null && <Rssi rssi={rssi} />
+            }
         </Box>
     )
 

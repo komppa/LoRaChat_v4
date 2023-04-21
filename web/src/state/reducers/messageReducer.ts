@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, ThunkAction, AnyAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
+import { v4 as uuidv4 } from 'uuid'
 
 
 export interface Message {
@@ -70,7 +71,7 @@ const messagesSlice = createSlice({
             // New message sent by me
             state.push({
                 // TODO CRIT I do not know these ids, server should create these?
-                id: (Math.floor(Math.random() * 255)).toString(),
+                id: uuidv4(),
                 from: action.payload.from,
                 to: action.payload.to,
                 content: action.payload.content,

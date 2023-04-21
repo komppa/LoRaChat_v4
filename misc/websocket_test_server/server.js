@@ -11,8 +11,14 @@ wss.on("connection", ws => {
     const activeUsers = {
         type: 'hb',
         data: [
-            "Jakke",
-            "Sepi",
+            {
+                username: "Jakke",
+                rssi: -120,
+            },
+            {
+                username: "Sepi",
+                rssi: -80,
+            },
         ]
     }
     
@@ -22,15 +28,15 @@ wss.on("connection", ws => {
         data: [
             {
                 username: "Sepi",
-                rssi: "-120",
+                rssi: -120,
             },
             {
                 username: "Östermalm",
-                rssi: "-80",
+                rssi: -80,
             },
             {
                 username: "Keinonen",
-                rssi: "-110",
+                rssi: -110,
             }
         ]
     }

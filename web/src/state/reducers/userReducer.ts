@@ -1,12 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
+import { v4 as uuidv4 } from 'uuid'
 
 export interface User {
   id: string
   username: string
-  rssi: string
+  rssi: number
   online: boolean
   lastSeen: number
+}
+
+interface RecvUser {
+    username: string
+    rssi: number
 }
 
 
@@ -16,22 +21,23 @@ const messagesSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        addUsers: (state, action: PayloadAction<string[]>) => {
+        addUsers: (state, action: PayloadAction<RecvUser[]>) => {
+
+            console.log('@addusers', action.payload)
 
             // Since server returns users that are online each time, we need to add new users that are not in the state
             // and update the online status to false for users that are already in the state but are not returned by the server
 
-            action.payload.forEach((incomingUsername) => {
-                const existingUser = state.find((user) => user.username === incomingUsername)
+            action.payload.forEach((incomingUser) => {
+                const existingUser = state.find((user) => user.username === incomingUser.username)
                 if (existingUser) {
                     existingUser.online = true
                     existingUser.lastSeen = Date.now()
                 } else {
                     state.push({
-                        // TODO CRIT random ID and use real rssi 
-                        id: Math.floor(Math.random()*1000).toString(),
-                        rssi: '-120',
-                        username: incomingUsername,
+                        id: uuidv4(),
+                        rssi: incomingUser.rssi,
+                        username: incomingUser.username,
                         online: true,
                         lastSeen: Date.now()
                     })
@@ -40,7 +46,7 @@ const messagesSlice = createSlice({
         
             // Mark users on state as offline that are not returned by the server
             state.forEach((user) => {
-                const existingUser = action.payload.find((username) => username === user.username)
+                const existingUser = action.payload.find((u: RecvUser) => u.username === user.username)
                 if (!existingUser) {
                     user.online = false
                     user.lastSeen = Date.now()
